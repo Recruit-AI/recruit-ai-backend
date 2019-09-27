@@ -9,23 +9,9 @@ const SymbolRouter = require('./components/symbols/symbol-router.js');
 const UserRouter = require('./components/users/user-router.js');
 
 const server = express();
-const session = require('express-session');
 const cors = require('cors')
 server.use(cors());
 
-server.use(
-  session({
-    name: 'notsession',
-    secret: 'nobody tosses a dwarf!',
-    cookie: {
-      maxAge: 1 * 24 * 60 * 60 * 1000,
-      secure: false,
-    },
-    httpOnly: true,
-    resave: false,
-    saveUninitialized: false,
-  })
-);
 
 server.use('/uploads', express.static('uploads'))
 server.use(express.json());
