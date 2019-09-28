@@ -64,7 +64,7 @@ router.post('/', user_restricted, upload.single('image_raw'), (req, res) => {
   imageData.thumbnail = !!imageData.thumbnail
 
   if (imageFile) {
-    imageData.image_url = imageFile.path.replace('uploads\\', "")
+    imageData.image_url = imageFile.path.replace('uploads\\', "").replace('uploads/', "")
 
     Images.add(imageData)
     .then(image => {
@@ -85,7 +85,7 @@ router.put('/:id', user_restricted, upload.single('image_raw'), (req, res) => {
   const imageFile = req.file;
 
   if (imageFile) {
-    changes.image_url = imageFile.path.replace('uploads\\', "")
+    changes.image_url = imageFile.path.replace('uploads\\', "").replace('uploads/', "")
   }
 
   Images.findById(id)
