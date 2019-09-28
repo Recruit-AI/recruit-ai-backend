@@ -31,7 +31,7 @@ router.get('/', (req, res) => {
     // return pager object and current page of items
     return res.json({ pager, pageOfItems: pageOfItems.map(item => ({
       ...item,
-      extra_info: JSON.parse(item.extra_info),
+      //extra_info: JSON.parse(item.extra_info),
       thumbnail: {
         image_url: item.image_url,
         thumbnail: item.thumbnail,
@@ -64,12 +64,14 @@ router.get('/:id', (req, res) => {
                           res.json(
                             {
                               ...symbol,
-                              extra_info: JSON.parse(symbol.extra_info),
+                              //extra_info: JSON.parse(symbol.extra_info),
                               thumbnail,
                               images,
                               pantheons,
                               connections,
-                              kind: {...kind, default_extra_info: JSON.parse(kind.default_extra_info) }
+                              kind: {...kind,
+                                //default_extra_info: JSON.parse(kind.default_extra_info) 
+                              }
                             }
                           )
                       }).catch(err => {res.status(500).json({ message: 'Failed to get kind.' })});

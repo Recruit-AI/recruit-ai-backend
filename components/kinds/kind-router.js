@@ -56,12 +56,12 @@ router.get('/:id', (req, res) => {
                   {
                     ...kind,
                     specific_order: kind.specific_order === 1 ? true : false,
-                    default_extra_info: JSON.parse(kind.default_extra_info),
+                    //default_extra_info: JSON.parse(kind.default_extra_info),
                     thumbnail,
                     images,
                     pantheons,
                     symbols: symbols.map((symbol) => {
-                      symbol.extra_info = JSON.parse(symbol.extra_info)
+                      //symbol.extra_info = JSON.parse(symbol.extra_info)
                       return symbol
                     })
                   }
