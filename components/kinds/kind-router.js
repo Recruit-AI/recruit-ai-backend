@@ -49,7 +49,9 @@ router.get('/:id', (req, res) => {
       Kinds.getImages(id).then(images => {
           Kinds.getThumbnail(id).then(thumbnail => {
             Kinds.findPantheonsByKindId(id).then(pantheons => {
+              console.log("P", pantheons)
               Kinds.getSymbols(id).then(symbols => {
+                console.log("S", symbols)
                 res.json(
                   {
                     ...kind,
