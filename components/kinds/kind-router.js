@@ -39,6 +39,15 @@ router.get('/', (req, res) => {
   });
 });
 
+router.get('/nameList', (req, res) => {
+  Kinds.listOfNames()
+  .then(kinds => {
+    res.json(kinds)
+  })
+  .catch(err => {
+    res.status(500).json({ message: 'Failed to get kinds' });
+  });
+}
 
 router.get('/:id', (req, res) => {
   const { id } = req.params;

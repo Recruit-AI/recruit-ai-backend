@@ -2,6 +2,7 @@ const db = require('../../data/dbConfig.js');
 
 module.exports = {
   find,
+  listOfNames,
   findById,
   findPantheonsBySymbolId,
   findConnectionsBySymbolId,
@@ -28,6 +29,11 @@ function find(sort, sortdir, searchTerm) {
   .where('foreign_class', "Symbol")
   .where('symbol_name', 'like', `%${searchTerm}%`)
   .where('thumbnail', 1)
+}
+
+function listOfNames() {
+  return db('symbols')
+  .select('symbol_name', 'symbol_id')
 }
 
 function findById(id) {

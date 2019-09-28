@@ -2,6 +2,7 @@ const db = require('../../data/dbConfig.js');
 
 module.exports = {
   find,
+  listOfNames,
   findById,
   findKindsByCategoryId,
   findPrereqsByCategoryId,
@@ -24,6 +25,11 @@ function find(sort, sortdir, searchTerm) {
   return db('categories')
   .orderBy(sort, sortdir)
   .where('category_name', 'like', `%${searchTerm}%`)
+}
+
+function listOfNames() {
+  return db('categories')
+  .select('category_name', 'category_id')
 }
 
 function findById(id) {

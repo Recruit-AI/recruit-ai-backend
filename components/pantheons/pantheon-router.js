@@ -47,6 +47,17 @@ router.get('/', (req, res) => {
   });
 });
 
+router.get('/nameList', (req, res) => {
+  Pantheons.listOfNames()
+  .then(items => {
+    res.json(items)
+  })
+  .catch(err => {
+    res.status(500).json({ message: 'Failed to get items' });
+  });
+}
+
+
 
 router.get('/:id', (req, res) => {
   const { id } = req.params;

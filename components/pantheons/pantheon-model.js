@@ -2,6 +2,7 @@ const db = require('../../data/dbConfig.js');
 
 module.exports = {
   find,
+  listOfNames,
   findById,
   findByHistoryId,
   historyById,
@@ -28,6 +29,11 @@ function find(sort, sortdir, searchTerm) {
   .where('foreign_class', "Pantheon")
   .where('pantheon_name', 'like', `%${searchTerm}%`)
   .where('thumbnail', 1)
+}
+
+function listOfNames() {
+  return db('pantheons')
+  .select('pantheon_name', 'pantheon_id')
 }
 
 function findById(id) {

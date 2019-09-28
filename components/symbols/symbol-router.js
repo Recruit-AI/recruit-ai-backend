@@ -70,7 +70,7 @@ router.get('/:id', (req, res) => {
                               pantheons,
                               connections,
                               kind: {...kind,
-                                //default_extra_info: JSON.parse(kind.default_extra_info) 
+                                //default_extra_info: JSON.parse(kind.default_extra_info)
                               }
                             }
                           )
@@ -85,6 +85,17 @@ router.get('/:id', (req, res) => {
   })
   .catch(err => {res.status(500).json({ message: 'Failed to get symbols' });});
 });
+
+router.get('/nameList', (req, res) => {
+  Symbols.listOfNames()
+  .then(items => {
+    res.json(items)
+  })
+  .catch(err => {
+    res.status(500).json({ message: 'Failed to get items' });
+  });
+}
+
 
 
 router.post('/', user_restricted, (req, res) => {

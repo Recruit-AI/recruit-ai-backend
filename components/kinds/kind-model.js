@@ -2,6 +2,7 @@ const db = require('../../data/dbConfig.js');
 
 module.exports = {
   find,
+  listOfNames,
   findById,
   findPantheonsByKindId,
   getSymbols,
@@ -21,6 +22,11 @@ function find(sort, sortdir, searchTerm) {
   return db('kinds')
   .orderBy(sort, sortdir)
   .where('kind_name', 'like', `%${searchTerm}%`)
+}
+
+function listOfNames() {
+  return db('kinds')
+  .select('kind_name', 'kind_id')
 }
 
 function findById(id) {
