@@ -43,7 +43,7 @@ router.get('/nameList', (req, res) => {
   .catch(err => {
     res.status(500).json({ message: 'Failed to get items' });
   });
-}
+})
 
 
 router.get('/:id', (req, res) => {
