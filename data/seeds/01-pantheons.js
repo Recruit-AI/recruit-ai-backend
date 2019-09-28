@@ -84,6 +84,22 @@ exports.seed = function(knex) {
     pantheon_history_text: text,
     pantheon_culture_text: text,
     start_year: -10000,
+    end_year: 2100},
+    //11
+    {pantheon_name: "Gnostic",
+    pantheon_description: "Just general humans doing humans stuff",
+    pantheon_overview_text: text,
+    pantheon_history_text: text,
+    pantheon_culture_text: text,
+    start_year: -10000,
+    end_year: 2100},
+    //12
+    {pantheon_name: "Norse",
+    pantheon_description: "Just general humans doing humans stuff",
+    pantheon_overview_text: text,
+    pantheon_history_text: text,
+    pantheon_culture_text: text,
+    start_year: -10000,
     end_year: 2100}
 
   ]);

@@ -7,6 +7,9 @@ exports.seed = function(knex) {
     {category_name: "Introduction to Magick", category_number: 101, category_description: string, category_overview_text: text, category_sources_text: text},
     {category_name: "Natural Magick", category_number: 102, category_description: string, category_overview_text: text, category_sources_text: text},
     {category_name: "Magick & Morality", category_number: 103, category_description: string, category_overview_text: text, category_sources_text: text},
-    {category_name: "Kabbalah", category_number: 201, category_description: string, category_overview_text: text, category_sources_text: text}
+    {category_name: "Kabbalah", category_number: 201, category_description: string, category_overview_text: text, category_sources_text: text},
+    {category_name: "Intro to Wicca", category_number: 101, category_description: string, category_overview_text: text, category_sources_text: text},
+    {category_name: "Intro to Divination", category_number: 101, category_description: string, category_overview_text: text, category_sources_text: text},
+    {category_name: "Nature", category_number: 102, category_description: string, category_overview_text: text, category_sources_text: text}
   ]);
 };

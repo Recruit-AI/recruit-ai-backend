@@ -58,7 +58,227 @@ exports.seed = function(knex) {
     kind_background_history_text: text,
     specific_order: 0,
     total_number: 0,
-    default_extra_info: "{}"
+    default_extra_info: JSON.stringify({})
+    },
+    //6
+    {
+    kind_name: "Runes",
+    creator_pantheon_id: 1,
+    kind_description: string,
+    kind_application_theory_text: text,
+    kind_background_history_text: text,
+    specific_order: 1,
+    total_number: 24,
+    default_extra_info: JSON.stringify({shape:"", sound:"", meaning:""})
+    },
+    //7
+    {
+    kind_name: "Trees",
+    creator_pantheon_id: 1,
+    kind_description: string,
+    kind_application_theory_text: text,
+    kind_background_history_text: text,
+    specific_order: 0,
+    total_number: 0,
+    default_extra_info: JSON.stringify({})
+    },
+    //8
+    {
+    kind_name: "Herbs",
+    creator_pantheon_id: 1,
+    kind_description: string,
+    kind_application_theory_text: text,
+    kind_background_history_text: text,
+    specific_order: 0,
+    total_number: 0,
+    default_extra_info: JSON.stringify({})
+    },
+    //9
+    {
+    kind_name: "Crystals",
+    creator_pantheon_id: 1,
+    kind_description: string,
+    kind_application_theory_text: text,
+    kind_background_history_text: text,
+    specific_order: 0,
+    total_number: 0,
+    default_extra_info: JSON.stringify({})
+    },
+    //10
+    {
+    kind_name: "Metals",
+    creator_pantheon_id: 1,
+    kind_description: string,
+    kind_application_theory_text: text,
+    kind_background_history_text: text,
+    specific_order: 0,
+    total_number: 0,
+    default_extra_info: JSON.stringify({})
+    },
+    //11
+    {
+    kind_name: "Elements",
+    creator_pantheon_id: 1,
+    kind_description: string,
+    kind_application_theory_text: text,
+    kind_background_history_text: text,
+    specific_order: 0,
+    total_number: 0,
+    default_extra_info: JSON.stringify({})
+    },
+    //12
+    {
+    kind_name: "Planets",
+    creator_pantheon_id: 1,
+    kind_description: string,
+    kind_application_theory_text: text,
+    kind_background_history_text: text,
+    specific_order: 1,
+    total_number: 10,
+    default_extra_info: JSON.stringify({})
+    },
+    //13
+    {
+    kind_name: "Values",
+    creator_pantheon_id: 1,
+    kind_description: string,
+    kind_application_theory_text: text,
+    kind_background_history_text: text,
+    specific_order: 0,
+    total_number: 0,
+    default_extra_info: JSON.stringify({})
+    },
+    //14
+    {
+    kind_name: "Properties",
+    creator_pantheon_id: 1,
+    kind_description: string,
+    kind_application_theory_text: text,
+    kind_background_history_text: text,
+    specific_order: 0,
+    total_number: 0,
+    default_extra_info: JSON.stringify({})
+    },
+    //15
+    {
+    kind_name: "Phenoms",
+    creator_pantheon_id: 1,
+    kind_description: string,
+    kind_application_theory_text: text,
+    kind_background_history_text: text,
+    specific_order: 0,
+    total_number: 0,
+    default_extra_info: JSON.stringify({})
+    },
+    //16
+    {
+    kind_name: "Sepiroth",
+    creator_pantheon_id: 1,
+    kind_description: string,
+    kind_application_theory_text: text,
+    kind_background_history_text: text,
+    specific_order: 0,
+    total_number: 0,
+    default_extra_info: JSON.stringify({})
+    },
+    //17
+    {
+    kind_name: "Days of The Week",
+    creator_pantheon_id: 1,
+    kind_description: string,
+    kind_application_theory_text: text,
+    kind_background_history_text: text,
+    specific_order: 0,
+    total_number: 0,
+    default_extra_info: JSON.stringify({})
+    },
+    //18
+    {
+    kind_name: "Seasons",
+    creator_pantheon_id: 1,
+    kind_description: string,
+    kind_application_theory_text: text,
+    kind_background_history_text: text,
+    specific_order: 0,
+    total_number: 0,
+    default_extra_info: JSON.stringify({})
+    },
+    //19
+    {
+    kind_name: "Directions",
+    creator_pantheon_id: 1,
+    kind_description: string,
+    kind_application_theory_text: text,
+    kind_background_history_text: text,
+    specific_order: 0,
+    total_number: 0,
+    default_extra_info: JSON.stringify({})
+    },
+    //20
+    {
+    kind_name: "Divine Names",
+    creator_pantheon_id: 1,
+    kind_description: string,
+    kind_application_theory_text: text,
+    kind_background_history_text: text,
+    specific_order: 0,
+    total_number: 0,
+    default_extra_info: JSON.stringify({})
+    },
+    //21
+    {
+    kind_name: "Teachings",
+    creator_pantheon_id: 1,
+    kind_description: string,
+    kind_application_theory_text: text,
+    kind_background_history_text: text,
+    specific_order: 0,
+    total_number: 0,
+    default_extra_info: JSON.stringify({})
+    },
+    //22
+    {
+    kind_name: "Stories",
+    creator_pantheon_id: 1,
+    kind_description: string,
+    kind_application_theory_text: text,
+    kind_background_history_text: text,
+    specific_order: 0,
+    total_number: 0,
+    default_extra_info: JSON.stringify({})
+    },
+    //23
+    {
+    kind_name: "Animals",
+    creator_pantheon_id: 1,
+    kind_description: string,
+    kind_application_theory_text: text,
+    kind_background_history_text: text,
+    specific_order: 0,
+    total_number: 0,
+    default_extra_info: JSON.stringify({})
+    },
+    //24
+    {
+    kind_name: "Sources",
+    creator_pantheon_id: 1,
+    kind_description: string,
+    kind_application_theory_text: text,
+    kind_background_history_text: text,
+    specific_order: 0,
+    total_number: 0,
+    default_extra_info: JSON.stringify({author:"",media:""})
+    },
+    //25
+    {
+    kind_name: "People",
+    creator_pantheon_id: 1,
+    kind_description: string,
+    kind_application_theory_text: text,
+    kind_background_history_text: text,
+    specific_order: 0,
+    total_number: 0,
+    default_extra_info: JSON.stringify({birthday:"",deathday:"",othernames:""})
     }
 
 
