@@ -50,6 +50,16 @@ router.get('/', (req, res) => {
 });
 
 
+router.get('/nameList', (req, res) => {
+  Symbols.listOfNames()
+  .then(items => {
+    res.json(items)
+  })
+  .catch(err => {
+    res.status(500).json({ message: 'Failed to get items' });
+  });
+})
+
 router.get('/:id', (req, res) => {
   const { id } = req.params;
 
@@ -86,15 +96,6 @@ router.get('/:id', (req, res) => {
   .catch(err => {res.status(500).json({ message: 'Failed to get symbols' });});
 });
 
-router.get('/nameList', (req, res) => {
-  Symbols.listOfNames()
-  .then(items => {
-    res.json(items)
-  })
-  .catch(err => {
-    res.status(500).json({ message: 'Failed to get items' });
-  });
-})
 
 
 
