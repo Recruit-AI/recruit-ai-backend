@@ -58,7 +58,6 @@ router.post('/', user_restricted, multerUploads, cloudinaryConfig, (req, res) =>
     //Add the image to the database.
     Images.add(imageData)
         .then(image => {
-          console.log(imageData)
           res.status(201).json(image);
         })
         .catch (err => {
@@ -78,10 +77,12 @@ router.put('/:id', user_restricted, multerUploads, cloudinaryConfig, (req, res) 
   const { id } = req.params;
   const imageData = req.body;
   const imageFile = req.file;
-  imageData.thumbnail = !!imageData.thumbnail
   //store the process image as a 'data-uri'
   const file = dataUri(req).content;
   //Uploading the image to cloudinary
+
+  console.log(imageData)
+
   uploader.upload(file)
   .then((result) => {
     imageData.image_url = result.url;
