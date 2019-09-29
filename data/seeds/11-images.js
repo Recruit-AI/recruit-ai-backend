@@ -8,7 +8,7 @@ exports.seed = function(knex) {
       big_array.push( {
           foreign_id: i,
           foreign_class: it,
-          image_url: "1567961920055alcohol-bar-beer-1283219.jpg",
+          image_url: "http://res.cloudinary.com/scaredsleepless/image/upload/v1569787956/al5xdygzxgfnvd4yzs0m.jpg",
           thumbnail: 1,
           image_title: "The Thumbnail of this object",
           image_description: "this is where a description will go for the thing when it is the time to put it there."
@@ -16,7 +16,7 @@ exports.seed = function(knex) {
       big_array.push( {
           foreign_id: i,
           foreign_class: it,
-          image_url: "1567961920055alcohol-bar-beer-1283219.jpg",
+          image_url: "http://res.cloudinary.com/scaredsleepless/image/upload/v1569787956/al5xdygzxgfnvd4yzs0m.jpg",
           thumbnail: 0,
           image_title: "The Thumbnail of this object",
           image_description: "this is where a description will go for the thing when it is the time to put it there."
@@ -24,7 +24,7 @@ exports.seed = function(knex) {
       big_array.push( {
           foreign_id: i,
           foreign_class: it,
-          image_url: "1567961920055alcohol-bar-beer-1283219.jpg",
+          image_url: "http://res.cloudinary.com/scaredsleepless/image/upload/v1569787956/al5xdygzxgfnvd4yzs0m.jpg",
           thumbnail: 0,
           image_title: "The Thumbnail of this object",
           image_description: "this is where a description will go for the thing when it is the time to put it there."
