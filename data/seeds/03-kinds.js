@@ -12,7 +12,7 @@ exports.seed = function(knex) {
     kind_description: string,
     kind_application_theory_text: text,
     kind_background_history_text: text,
-    specific_order: 1,
+    specific_order: true,
     total_number: 78,
     default_extra_info: JSON.stringify({"suit": ""})
     },
@@ -23,7 +23,7 @@ exports.seed = function(knex) {
     kind_description: string,
     kind_application_theory_text: text,
     kind_background_history_text: text,
-    specific_order: 1,
+    specific_order: true,
     total_number: 22,
     default_extra_info: JSON.stringify({"sound": "", "value": "", "meaning": ""})
     },
@@ -34,7 +34,7 @@ exports.seed = function(knex) {
     kind_description: string,
     kind_application_theory_text: text,
     kind_background_history_text: text,
-    specific_order: 1,
+    specific_order: true,
     total_number: 78,
     default_extra_info: JSON.stringify({"mutability": "", "element": "", "symbol": "", "dates": ""})
     },
@@ -45,7 +45,7 @@ exports.seed = function(knex) {
     kind_description: string,
     kind_application_theory_text: text,
     kind_background_history_text: text,
-    specific_order: 1,
+    specific_order: true,
     total_number: 7,
     default_extra_info: JSON.stringify({"location": ""})
     },
@@ -56,7 +56,7 @@ exports.seed = function(knex) {
     kind_description: string,
     kind_application_theory_text: text,
     kind_background_history_text: text,
-    specific_order: 0,
+    specific_order: false,
     total_number: 0,
     default_extra_info: JSON.stringify({})
     },
@@ -67,7 +67,7 @@ exports.seed = function(knex) {
     kind_description: string,
     kind_application_theory_text: text,
     kind_background_history_text: text,
-    specific_order: 1,
+    specific_order: true,
     total_number: 24,
     default_extra_info: JSON.stringify({shape:"", sound:"", meaning:""})
     },
@@ -78,7 +78,7 @@ exports.seed = function(knex) {
     kind_description: string,
     kind_application_theory_text: text,
     kind_background_history_text: text,
-    specific_order: 0,
+    specific_order: false,
     total_number: 0,
     default_extra_info: JSON.stringify({})
     },
@@ -89,7 +89,7 @@ exports.seed = function(knex) {
     kind_description: string,
     kind_application_theory_text: text,
     kind_background_history_text: text,
-    specific_order: 0,
+    specific_order: false,
     total_number: 0,
     default_extra_info: JSON.stringify({})
     },
@@ -100,7 +100,7 @@ exports.seed = function(knex) {
     kind_description: string,
     kind_application_theory_text: text,
     kind_background_history_text: text,
-    specific_order: 0,
+    specific_order: false,
     total_number: 0,
     default_extra_info: JSON.stringify({})
     },
@@ -111,7 +111,7 @@ exports.seed = function(knex) {
     kind_description: string,
     kind_application_theory_text: text,
     kind_background_history_text: text,
-    specific_order: 0,
+    specific_order: false,
     total_number: 0,
     default_extra_info: JSON.stringify({})
     },
@@ -122,7 +122,7 @@ exports.seed = function(knex) {
     kind_description: string,
     kind_application_theory_text: text,
     kind_background_history_text: text,
-    specific_order: 0,
+    specific_order: false,
     total_number: 0,
     default_extra_info: JSON.stringify({})
     },
@@ -133,7 +133,7 @@ exports.seed = function(knex) {
     kind_description: string,
     kind_application_theory_text: text,
     kind_background_history_text: text,
-    specific_order: 1,
+    specific_order: true,
     total_number: 10,
     default_extra_info: JSON.stringify({})
     },
@@ -144,7 +144,7 @@ exports.seed = function(knex) {
     kind_description: string,
     kind_application_theory_text: text,
     kind_background_history_text: text,
-    specific_order: 0,
+    specific_order: false,
     total_number: 0,
     default_extra_info: JSON.stringify({})
     },
@@ -155,7 +155,7 @@ exports.seed = function(knex) {
     kind_description: string,
     kind_application_theory_text: text,
     kind_background_history_text: text,
-    specific_order: 0,
+    specific_order: false,
     total_number: 0,
     default_extra_info: JSON.stringify({})
     },
@@ -166,7 +166,7 @@ exports.seed = function(knex) {
     kind_description: string,
     kind_application_theory_text: text,
     kind_background_history_text: text,
-    specific_order: 0,
+    specific_order: false,
     total_number: 0,
     default_extra_info: JSON.stringify({})
     },
@@ -177,7 +177,7 @@ exports.seed = function(knex) {
     kind_description: string,
     kind_application_theory_text: text,
     kind_background_history_text: text,
-    specific_order: 0,
+    specific_order: false,
     total_number: 0,
     default_extra_info: JSON.stringify({})
     },
@@ -188,7 +188,7 @@ exports.seed = function(knex) {
     kind_description: string,
     kind_application_theory_text: text,
     kind_background_history_text: text,
-    specific_order: 0,
+    specific_order: false,
     total_number: 0,
     default_extra_info: JSON.stringify({})
     },
@@ -199,7 +199,7 @@ exports.seed = function(knex) {
     kind_description: string,
     kind_application_theory_text: text,
     kind_background_history_text: text,
-    specific_order: 0,
+    specific_order: false,
     total_number: 0,
     default_extra_info: JSON.stringify({})
     },
@@ -210,7 +210,7 @@ exports.seed = function(knex) {
     kind_description: string,
     kind_application_theory_text: text,
     kind_background_history_text: text,
-    specific_order: 0,
+    specific_order: false,
     total_number: 0,
     default_extra_info: JSON.stringify({})
     },
@@ -221,7 +221,7 @@ exports.seed = function(knex) {
     kind_description: string,
     kind_application_theory_text: text,
     kind_background_history_text: text,
-    specific_order: 0,
+    specific_order: false,
     total_number: 0,
     default_extra_info: JSON.stringify({})
     },
@@ -232,7 +232,7 @@ exports.seed = function(knex) {
     kind_description: string,
     kind_application_theory_text: text,
     kind_background_history_text: text,
-    specific_order: 0,
+    specific_order: false,
     total_number: 0,
     default_extra_info: JSON.stringify({})
     },
@@ -243,7 +243,7 @@ exports.seed = function(knex) {
     kind_description: string,
     kind_application_theory_text: text,
     kind_background_history_text: text,
-    specific_order: 0,
+    specific_order: false,
     total_number: 0,
     default_extra_info: JSON.stringify({})
     },
@@ -254,7 +254,7 @@ exports.seed = function(knex) {
     kind_description: string,
     kind_application_theory_text: text,
     kind_background_history_text: text,
-    specific_order: 0,
+    specific_order: false,
     total_number: 0,
     default_extra_info: JSON.stringify({})
     },
@@ -265,7 +265,7 @@ exports.seed = function(knex) {
     kind_description: string,
     kind_application_theory_text: text,
     kind_background_history_text: text,
-    specific_order: 0,
+    specific_order: false,
     total_number: 0,
     default_extra_info: JSON.stringify({author:"",media:""})
     },
@@ -276,7 +276,7 @@ exports.seed = function(knex) {
     kind_description: string,
     kind_application_theory_text: text,
     kind_background_history_text: text,
-    specific_order: 0,
+    specific_order: false,
     total_number: 0,
     default_extra_info: JSON.stringify({birthday:"",deathday:"",othernames:""})
     }
