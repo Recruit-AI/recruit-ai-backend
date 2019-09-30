@@ -25,10 +25,15 @@ module.exports = {
 function find(sort, sortdir, searchTerm) {
   return db('symbols')
   .orderBy(sort, sortdir)
-  .join('images', 'symbols.symbol_id', 'images.foreign_id')
-  .where('foreign_class', "Symbol")
+  .leftJoin('images', 'symbols.symbol_id', 'images.foreign_id')
   .where('symbol_name', 'like', `%${searchTerm}%`)
-  .where('thumbnail', 1)
+  .where(function() {
+    this.where('foreign_class', "Symbol").andWhere('thumbnail', true)
+  }).orWhere(function() {
+    this.whereNull('foreign_class').whereNull('thumbnail')
+  })
+  .then()
+  .catch(err => console.log(err))
 }
 
 function listOfNames() {
@@ -69,9 +74,14 @@ function getThumbnail(id) {
 function add(symbol) {
   return db('symbols')
     .insert(symbol)
-    .then(ids => {
-      return "Success";
-    });
+    .returning('symbol_id')
+    .then(res => {
+      return findById(res[0])
+    })
+    .catch(err => {
+      console.log(err)
+      return err
+    })
 }
 
 function addPantheonsConnection(symbol_pantheon) {

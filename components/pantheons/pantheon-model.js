@@ -25,10 +25,16 @@ module.exports = {
 function find(sort, sortdir, searchTerm) {
   return db('pantheons')
   .orderBy(sort, sortdir)
-  .join('images', 'pantheons.pantheon_id', 'images.foreign_id')
-  .where('foreign_class', "Pantheon")
+  .leftJoin('images', 'pantheons.pantheon_id', 'images.foreign_id')
   .where('pantheon_name', 'like', `%${searchTerm}%`)
-  .where('thumbnail', 1)
+  .where(function() {
+    this.where('foreign_class', "Pantheon").andWhere('thumbnail', true)
+  }).orWhere(function() {
+    this.whereNull('foreign_class').whereNull('thumbnail')
+  })
+  .then()
+  .catch(err => console.log(err))
+
 }
 
 function listOfNames() {
@@ -86,9 +92,14 @@ function getThumbnail(id) {
 function add(pantheon) {
   return db('pantheons')
     .insert(pantheon)
-    .then(ids => {
-      return findById(ids[0]);
-    });
+    .returning('pantheon_id')
+    .then(res => {
+      return findById(res[0])
+    })
+    .catch(err => {
+      console.log(err)
+      return err
+    })
 }
 
 function addHistory(data) {

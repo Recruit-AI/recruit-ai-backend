@@ -94,7 +94,7 @@ router.post('/', mod_restricted, (req, res) => {
     res.status(201).json(pantheon);
   })
   .catch (err => {
-    res.status(500).json({ message: 'Failed to create new pantheon' });
+    res.status(500).json({ message: 'Failed to create new pantheon', err: pantheonData });
   });
 });
 
