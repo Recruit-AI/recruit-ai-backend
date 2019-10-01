@@ -22,7 +22,7 @@ exports.seed = function(knex) {
       symbol_overview_text: text,
       other_spellings: "",
       symbol_meaning_text: text,
-      order_number: 0,
+      order_number: 1,
       extra_info: JSON.stringify({suit: "Major Arcana"})
     },
     {
@@ -32,7 +32,7 @@ exports.seed = function(knex) {
       symbol_overview_text: text,
       other_spellings: "",
       symbol_meaning_text: text,
-      order_number: 2,
+      order_number: 3,
       extra_info: JSON.stringify({suit: "Major Arcana"})
     },
     {
@@ -102,7 +102,7 @@ exports.seed = function(knex) {
       symbol_overview_text: text,
       other_spellings: "",
       symbol_meaning_text: text,
-      order_number: null,
+      order_number: 0,
       extra_info: JSON.stringify({})
     },
     {
@@ -112,7 +112,7 @@ exports.seed = function(knex) {
       symbol_overview_text: text,
       other_spellings: "",
       symbol_meaning_text: text,
-      order_number: null,
+      order_number: 0,
       extra_info: JSON.stringify({})
     },
     {
@@ -122,7 +122,7 @@ exports.seed = function(knex) {
       symbol_overview_text: text,
       other_spellings: "",
       symbol_meaning_text: text,
-      order_number: null,
+      order_number: 0,
       extra_info: JSON.stringify({})
     },
     {
@@ -132,7 +132,7 @@ exports.seed = function(knex) {
       symbol_overview_text: text,
       other_spellings: "",
       symbol_meaning_text: text,
-      order_number: null,
+      order_number: 0,
       extra_info: JSON.stringify({})
     }
 
