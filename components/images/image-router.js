@@ -48,6 +48,9 @@ router.post('/', user_restricted, multerUploads, cloudinaryConfig, (req, res) =>
 
   imageData.thumbnail = !!imageData.thumbnail
 
+  console.log(imageData.thumbnail)
+  if(imageData.thumbnail) { Images.removeThumbnail(imageData) }
+
   //store the process image as a 'data-uri'
   const file = dataUri(req).content;
 
@@ -76,20 +79,43 @@ router.post('/', user_restricted, multerUploads, cloudinaryConfig, (req, res) =>
 router.put('/:id', user_restricted, multerUploads, cloudinaryConfig, (req, res) => {
   const { id } = req.params;
   const imageData = req.body;
-  const imageFile = req.file;
-  //store the process image as a 'data-uri'
-  const file = dataUri(req).content;
-  //Uploading the image to cloudinary
 
-  console.log(imageData)
+  if(req.file) {
+    const imageFile = req.file;
+    //store the process image as a 'data-uri'
+    const file = dataUri(req).content;
+    //Uploading the image to cloudinary
 
-  uploader.upload(file)
-  .then((result) => {
-    imageData.image_url = result.url;
-    //Add the image to the database.
+
+    uploader.upload(file)
+    .then((result) => {
+      imageData.image_url = result.url;
+      //Add the image to the database.
+      Images.findById(id)
+      .then(image => {
+        if (image) {
+          if(imageData.thumbnail) { Images.removeThumbnail(image) }
+          Images.update(imageData, id)
+          .then(updatedImage => {
+            res.json(updatedImage);
+          });
+        } else {
+          res.status(404).json({ message: 'Could not find image with given id' });
+        }
+      })
+      .catch (err => {
+        res.status(500).json({ message: 'Failed to update image' });
+      });
+    })
+    .catch((err) => res.status(400).json({
+      messge: 'someting went wrong while processing your request',
+      data: { err }
+    }))
+  } else {
     Images.findById(id)
     .then(image => {
       if (image) {
+        if(imageData.thumbnail) { Images.removeThumbnail(image) }
         Images.update(imageData, id)
         .then(updatedImage => {
           res.json(updatedImage);
@@ -101,11 +127,9 @@ router.put('/:id', user_restricted, multerUploads, cloudinaryConfig, (req, res) 
     .catch (err => {
       res.status(500).json({ message: 'Failed to update image' });
     });
-  })
-  .catch((err) => res.status(400).json({
-    messge: 'someting went wrong while processing your request',
-    data: { err }
-  }))
+  }
+
+
 });
 
 
