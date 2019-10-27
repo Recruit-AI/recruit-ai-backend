@@ -57,6 +57,14 @@ function getThumbnail(id) {
 function add(kind) {
   return db('kinds')
     .insert(kind)
+    .returning('kind_id')
+    .then(res => {
+      return findById(res[0])
+    })
+    .catch(err => {
+      console.log(err)
+      return err
+    })
 }
 
 function addPantheonConnection(kind) {
