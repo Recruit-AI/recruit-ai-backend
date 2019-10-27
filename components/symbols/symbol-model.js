@@ -26,6 +26,7 @@ function find(sort, sortdir, searchTerm) {
   return db('symbols')
   .orderBy(sort, sortdir)
   .leftJoin('images', 'symbols.symbol_id', 'images.foreign_id')
+  .leftJoin('kinds', 'symbols.symbol_kind_id', 'kinds.kind_id')
   .where('symbol_name', 'like', `%${searchTerm}%`)
   .andWhere(function() {
     this.where(function() {
@@ -58,6 +59,7 @@ function findPantheonsBySymbolId(id) {
 function findConnectionsBySymbolId(id) {
   return db('symbol_connections')
     .join('symbols', 'symbol_connections.connected_symbol_id', 'symbols.symbol_id')
+    .join('kinds', 'symbols.symbol_kind_id', 'kinds.kind_id')
     .where('main_symbol_id', id)
 }
 
