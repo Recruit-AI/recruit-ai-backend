@@ -27,10 +27,12 @@ function find(sort, sortdir, searchTerm) {
   .orderBy(sort, sortdir)
   .leftJoin('images', 'symbols.symbol_id', 'images.foreign_id')
   .where('symbol_name', 'like', `%${searchTerm}%`)
-  .where(function() {
-    this.where('foreign_class', "Symbol").andWhere('thumbnail', true)
-  }).orWhere(function() {
-    this.whereNull('foreign_class').whereNull('thumbnail')
+  .andWhere(function() {
+    this.where(function() {
+      this.where('foreign_class', "Symbol").andWhere('thumbnail', true)
+    }).orWhere(function() {
+      this.whereNull('foreign_class').whereNull('thumbnail')
+    })
   })
   .then()
   .catch(err => console.log(err))

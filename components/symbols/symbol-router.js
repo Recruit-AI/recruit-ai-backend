@@ -8,7 +8,7 @@ const router = express.Router();
 
 
 
-
+ 
 router.get('/', (req, res) => {
   const sort = req.query.sort || "symbol_name"
   const sortdir = req.query.sortdir || "ASC"
