@@ -8,7 +8,7 @@ const router = express.Router();
 
 
 
- 
+
 router.get('/', (req, res) => {
   const sort = req.query.sort || "symbol_name"
   const sortdir = req.query.sortdir || "ASC"
@@ -113,15 +113,44 @@ router.post('/', user_restricted, (req, res) => {
 
 router.post('/connections', user_restricted, (req, res) => {
   const data = req.body;
+  let duplicateConnection = data.duplicateConnection
+  delete data.duplicateConnection
 
   Symbols.addConnection(data)
   .then(symbol => {
-    res.status(201).json(symbol);
+    if(duplicateConnection) {
+      const main_id = data.main_symbol_id
+      const connect_id = data.connected_symbol_id
+      const relationship = data.connection_relationship
+      //In cases 2 & 5, they stay the same.
+      switch(relationship){
+        case 0:
+          data.connection_relationship = 1
+          break;
+        case 1:
+          data.connection_relationship = 0
+          break;
+        case 3:
+          data.connection_relationship = 4
+          break;
+        case 4:
+          data.connection_relationship = 3
+          break;
+      }
+      data.connected_symbol_id = main_id
+      data.main_symbol_id = connect_id
+      Symbols.addConnection(data).then(s2 => res.status(201).json(symbol));
+    }
+    else {
+      res.status(201).json(symbol);
+    }
   })
   .catch (err => {
     res.status(500).json({ message: 'Failed to create new connection' });
   });
 })
+
+
 
 router.post('/pantheons', mod_restricted, (req, res) => {
   const data = req.body;
