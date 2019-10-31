@@ -1,0 +1,48 @@
+const db = require('../../../../data/dbConfig.js');
+
+module.exports = {
+  findByCategory,
+  findById,
+  add,
+  update,
+  remove
+};
+
+
+
+
+function findByCategory(id) {
+  return db('category_prerequisites')
+  .where('cp_category_id', id)
+}
+
+function findById(id) {
+  return db('category_prerequisites')
+    .where( 'category_prerequisite_id', id )
+    .first();
+}
+
+function add(category_prerequisite) {
+  return db('category_prerequisites')
+    .insert(category_prerequisite)
+    .returning('category_prerequisite_id')
+    .then(res => {
+      return findById(res[0])
+    })
+    .catch(err => {
+      console.log(err)
+      return err
+    })
+}
+
+function update(changes, id) {
+  return db('category_prerequisites')
+    .where('category_prerequisite_id', id)
+    .update(changes);
+}
+
+function remove(id) {
+  return db('category_prerequisites')
+    .where( 'category_prerequisite_id', id )
+    .del();
+}

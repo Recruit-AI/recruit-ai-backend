@@ -36,6 +36,8 @@ router.post('/register', (req, res) => {
 
   userData.password = bcrypt.hashSync(userData.password, 10)
 
+  //NEEDS to send link to email with correct verify link
+
   Users.add(userData)
   .then(user => {
     res.status(201).json(user);
@@ -45,8 +47,8 @@ router.post('/register', (req, res) => {
   });
 });
 
-router.post("/verify", (req, res) => {
-  const id = req.body.user_id
+router.get("/verify/:id", (req, res) => {
+  const id = req.params.id
   Users.update({user_verified: true}, id)
   .then(response => res.json(response))
   .catch(err => { res.status(500).json({ message: 'Failed.' }) })

@@ -3,6 +3,8 @@ const db = require('../../data/dbConfig.js');
 module.exports = {
   find,
   findById,
+  getImages,
+  getThumbnail,
   add,
   update,
   remove,
@@ -19,6 +21,14 @@ function findById(id) {
   return db('images')
     .where( 'image_id', id )
     .first();
+}
+
+function getImages(foreign_class, id) {
+  return db('images').where("foreign_id", id).where("foreign_class", foreign_class).where("thumbnail", false)
+}
+
+function getThumbnail(foreign_class, id) {
+  return db('images').where("foreign_id", id).where("foreign_class", foreign_class).where("thumbnail", true).first()
 }
 
 function add(image) {

@@ -4,19 +4,9 @@ module.exports = {
   find,
   listOfNames,
   findById,
-  findKindsByCategoryId,
-  findPrereqsByCategoryId,
-  getImages,
-  getThumbnail,
   add,
-  addKindsConnection,
-  addPrereq,
-  editKindsConnection,
-  editPrereq,
   update,
   remove,
-  removeKindsConnection,
-  removePrereq
 };
 
 
@@ -48,14 +38,6 @@ function findPrereqsByCategoryId(id) {
   return db('category_prerequisites')
     .join('categories', 'category_prerequisites.cp_prereq_id', 'categories.category_id')
     .where('cp_category_id', id)
-}
-
-function getImages(id) {
-  return db('images').where("foreign_id", id).where("foreign_class", "Category").where("thumbnail", false)
-}
-
-function getThumbnail(id) {
-  return db('images').where("foreign_id", id).where("foreign_class", "Category").where("thumbnail", true).first()
 }
 
 function add(category) {
