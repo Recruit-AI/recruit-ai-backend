@@ -61,9 +61,14 @@ function getThumbnail(id) {
 function add(category) {
   return db('categories')
     .insert(category)
-    .then(ids => {
-      return "Success";
-    });
+    .returning('category_id')
+    .then(res => {
+      return findById(res[0])
+    })
+    .catch(err => {
+      console.log(err)
+      return err
+    })
 }
 
 function addKindsConnection(category_kind) {
