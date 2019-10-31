@@ -21,7 +21,7 @@ module.exports = {
 function find(sort, sortdir, searchTerm) {
   return db('kinds')
   .orderBy(sort, sortdir)
-  .leftJoin('images', 'pantheons.pantheon_id', 'images.foreign_id')
+  .leftJoin('images', 'kinds.kind_id', 'images.foreign_id')
   .where('kind_name', 'like', `%${searchTerm}%`)
   .andWhere(function() {
     this.where(function() {
