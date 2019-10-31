@@ -10,18 +10,6 @@ const {user_restricted, mod_restricted, admin_restricted} = require('../middlewa
 
 const router = express.Router();
 
-
-router.get('/admin-list', admin_restricted, (req, res) => {
-  Users.find()
-  .then(users => {
-    res.json(users);
-  })
-  .catch(err => {
-    res.status(500).json({ message: 'Failed to get users' });
-  });
-});
-
-
 router.get('/profile/:id', (req, res) => {
   const { id } = req.params;
 
@@ -40,9 +28,11 @@ router.get('/profile/:id', (req, res) => {
   .catch(err => {res.status(500).json({ message: 'Failed to get users' });});
 });
 
-
 router.post('/register', (req, res) => {
   const userData = req.body;
+  userData.user_role = 1
+  delete userData.user_id
+  delete userData.user_verified
 
   userData.password = bcrypt.hashSync(userData.password, 10)
 
@@ -55,12 +45,20 @@ router.post('/register', (req, res) => {
   });
 });
 
+router.post("/verify", (req, res) => {
+  const id = req.body.user_id
+  Users.update({user_verified: true}, id)
+  .then(response => res.json(response))
+  .catch(err => { res.status(500).json({ message: 'Failed.' }) })
+
+})
+
 router.post('/login', (req, res) => {
   let {username, password} = req.body
 
   Users.findByUsername(username)
   .then(user => {
-    if(user && bcrypt.compareSync(password, user.password)){
+    if(user && bcrypt.compareSync(password, user.password) && user.user_verified){
       const token = generateToken(user)
       res.status(200).json({message: "Welcome!", token: token, user: user})
     } else {
@@ -73,9 +71,29 @@ router.post('/login', (req, res) => {
 });
 
 
-router.put('/:id', profile_restricted, (req, res) => {
-  const { id } = req.params;
+router.get('/dashboard', user_restricted, (req, res) => {
+  const user = req.decodedToken.user;
+  const id = user.user_id
+
+    Users.findById(id)
+    .then(userProfile => {
+        res.json(userProfile)
+      });
+    })
+
+router.delete('/logout', (req, res) => {
+  req.session.user = null;
+  res.status(200).json({message: "Logged out!"})
+});
+
+
+router.put('/edit', user_restricted, (req, res) => {
   const changes = req.body;
+  const user = req.decodedToken.user;
+  const id = user.user_id
+  delete changes['user_role']
+  delete changes['user_id']
+  delete changes['user_verified']
 
   Users.findById(id)
   .then(user => {
@@ -93,9 +111,10 @@ router.put('/:id', profile_restricted, (req, res) => {
   });
 });
 
+router.delete('/', user_restricted, (req, res) => {
+  const user = req.decodedToken.user;
+  const id = user.user_id
 
-router.delete('/:id', admin_restricted, (req, res) => {
-  const { id } = req.params;
       Users.remove(id)
       .then(deleted => {
         res.send("Success.")
@@ -103,27 +122,43 @@ router.delete('/:id', admin_restricted, (req, res) => {
       .catch(err => { res.status(500).json({ message: 'Failed to delete user' }) });
 });
 
-router.delete('/logout', (req, res) => {
-  req.session.user = null;
-  res.status(200).json({message: "Logged out!"})
+//MODERATOR ROUTES
+//Returns a list of users that can probably be searched
+router.get('/admin-list', user_restricted, mod_restricted, (req, res) => {
+  Users.find()
+  .then(users => {
+    res.json(users);
+  })
+  .catch(err => {
+    res.status(500).json({ message: 'Failed to get users' });
+  });
 });
 
-function profile_restricted(req, res, next) {
-  // const logged_in_user = req.session.user
-  // const {id} = req.params
-  //
-  // console.log( req.session.user.user_id , Number.parseInt(id) )
-  // if(logged_in_user){
-  //   if(logged_in_user.role >= 3 || logged_in_user.user_id === Number.parseInt(id)){
-  //     next();
-  //   } else {
-  //     res.status(400).json({message: "You do not have permission to do this."})
-  //   }
-  // } else{
-  //   res.status(400).json({message: "Please log in."})
-  // }
-  next();
-}
+//Makes it so that user can no longer log in. Add a "ban_notes" field to a user account
+router.post("/ban", user_restricted, mod_restricted, (req, res) => {
+  const id = req.body.user_id
+  Users.update({user_verified: false}, id)
+  .then(response => res.json(response))
+  .catch(err => { res.status(500).json({ message: 'Failed.' }) })
+
+})
+
+//Makes it so that user can log in again. Add a "ban_notes" field to a user account
+router.post("/unban", user_restricted, mod_restricted, (req, res) => {
+  const id = req.body.user_id
+  Users.update({user_verified: true}, id)
+  .then(response => res.json(response))
+  .catch(err => { res.status(500).json({ message: 'Failed.' }) })
+
+})
+
+//Accepts user_id and role_number. Make sure the user being demoted is not also an admin
+router.post('/promote', user_restricted, admin_restricted, (req, res) => {
+  const {user_id, user_role} = req.body
+  Users.update({user_role}, user_id)
+  .then(response => res.json(response))
+  .catch(err => { res.status(500).json({ message: 'Failed.' }) })
+})
 
 function generateToken(user) {
   const payload = {
