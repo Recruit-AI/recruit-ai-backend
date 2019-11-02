@@ -3,6 +3,8 @@ const express = require('express');
 const CategoryToKinds = require('./category_to_kind-model.js');
 
 const router = express.Router();
+const {user_restricted, mod_restricted, admin_restricted} = require('../../../users/restricted-middleware.js')
+const {log} = require('../../../logs/log-middleware.js')
 
 router.get('/', (req, res) => {
   CategoryToKinds.find()
@@ -29,11 +31,12 @@ router.get('/:id', (req, res) => {
 });
 
 
-router.post('/', (req, res) => {
+router.post('/', user_restricted, (req, res) => {
   const category_to_kindData = req.body;
 
   CategoryToKinds.add(category_to_kindData)
   .then(category_to_kind => {
+    log(req, {}, category_to_kind)
     res.status(201).json(category_to_kind);
   })
   .catch (err => {
@@ -42,10 +45,11 @@ router.post('/', (req, res) => {
 
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', user_restricted, async (req, res) => {
   const { id } = req.params;
   const category_to_kindData = req.body;
 
+  log(req, await CategoryToKinds.findById(id))
   CategoryToKinds.update(category_to_kindData, id)
   .then(updatedCategoryToKind => {
     res.json(updatedCategoryToKind);
@@ -56,8 +60,9 @@ router.put('/:id', (req, res) => {
 
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', user_restricted, mod_restricted, async (req, res) => {
   const { id } = req.params;
+    log(req, await CategoryToKinds.findById(id) )
   CategoryToKinds.remove(id)
   .then(deleted => {
     res.send("Success.")

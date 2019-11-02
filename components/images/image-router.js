@@ -2,7 +2,8 @@ const express = require('express');
 
 const Images = require('./image-model.js');
 
-const {user_restricted, mod_restricted, admin_restricted} = require('../middleware.js')
+const {user_restricted, mod_restricted, admin_restricted} = require('../users/restricted-middleware.js')
+const {log} = require('../logs/log-middleware.js')
 
 const multer = require('../../config/multer')
 const multerUploads = multer.multerUploads
@@ -14,7 +15,6 @@ const cloudinaryConfig = cloudinary.cloudinaryConfig
 
 
 const router = express.Router();
-
 
 router.get('/', (req, res) => {
   Images.find()
@@ -61,6 +61,7 @@ router.post('/', user_restricted, multerUploads, cloudinaryConfig, (req, res) =>
     //Add the image to the database.
     Images.add(imageData)
         .then(image => {
+          log(req, {}, image)
           res.status(201).json(image);
         })
         .catch (err => {
@@ -94,6 +95,8 @@ router.put('/:id', user_restricted, multerUploads, cloudinaryConfig, (req, res) 
       Images.findById(id)
       .then(image => {
         if (image) {
+          log(req, image) //Find a way to log that being a thumbnail again
+          //If the incoming image is being set as thumnbnail, remove the current one.
           if(imageData.thumbnail) { Images.removeThumbnail(image) }
           Images.update(imageData, id)
           .then(updatedImage => {
@@ -115,6 +118,8 @@ router.put('/:id', user_restricted, multerUploads, cloudinaryConfig, (req, res) 
     Images.findById(id)
     .then(image => {
       if (image) {
+        log(req, image) //Find a way to log that being a thumbnail again
+        //If the incoming image is being set as thumnbnail, remove the current one.
         if(imageData.thumbnail) { Images.removeThumbnail(image) }
         Images.update(imageData, id)
         .then(updatedImage => {
@@ -133,8 +138,10 @@ router.put('/:id', user_restricted, multerUploads, cloudinaryConfig, (req, res) 
 });
 
 
-router.delete('/:id', mod_restricted, (req, res) => {
+router.delete('/:id', user_restricted, mod_restricted, async (req, res) => {
   const { id } = req.params;
+
+  log(req, await Images.findById(id) )
       Images.remove(id)
       .then(deleted => {
         res.send("Success.")

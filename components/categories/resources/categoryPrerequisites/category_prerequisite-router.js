@@ -3,6 +3,8 @@ const express = require('express');
 const CategoryPrereqs = require('./category_prerequisite-model.js');
 
 const router = express.Router();
+const {user_restricted, mod_restricted, admin_restricted} = require('../../../users/restricted-middleware.js')
+const {log} = require('../../../logs/log-middleware.js')
 
 router.get('/', (req, res) => {
   CategoryPrereqs.find()
@@ -29,11 +31,12 @@ router.get('/:id', (req, res) => {
 });
 
 
-router.post('/', (req, res) => {
+router.post('/', user_restricted, (req, res) => {
   const category_prereqData = req.body;
 
   CategoryPrereqs.add(category_prereqData)
   .then(category_prereq => {
+    log(req, {}, category_prereq)
     res.status(201).json(category_prereq);
   })
   .catch (err => {
@@ -42,10 +45,12 @@ router.post('/', (req, res) => {
 
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', user_restricted, async (req, res) => {
   const { id } = req.params;
   const category_prereqData = req.body;
 
+
+  log(req, await CategoryPrereqs.findById(id))
   CategoryPrereqs.update(category_prereqData, id)
   .then(updatedCategoryPrereq => {
     res.json(updatedCategoryPrereq);
@@ -56,8 +61,9 @@ router.put('/:id', (req, res) => {
 
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id',user_restricted, mod_restricted, async (req, res) => {
   const { id } = req.params;
+    log(req, await CategoryPrereqs.findById(id) )
   CategoryPrereqs.remove(id)
   .then(deleted => {
     res.send("Success.")

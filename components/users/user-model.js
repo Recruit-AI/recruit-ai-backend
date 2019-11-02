@@ -40,9 +40,10 @@ function getThumbnail(id) {
 function add(user) {
   return db('users')
     .insert(user)
-    .then(ids => {
-      return "Success";
-    });
+    .returning('user_id')
+    .then(res => {
+      return findById(res[0])
+    })
 }
 
 function update(changes, id) {

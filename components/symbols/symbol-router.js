@@ -1,13 +1,22 @@
 const express = require('express');
-const paginate = require('jw-paginate')
-const Symbols = require('./symbol-model.js');
-
-const {user_restricted, mod_restricted, admin_restricted} = require('../middleware.js')
-
+const paginate = require('jw-paginate');
 const router = express.Router();
 
 
+const Symbols = require('./symbol-model.js');
+const SymbolConnections = require('./resources/symbolConnections/symbol_connection-model.js');
+const SymbolToPantheons = require('./resources/symbolPantheons/symbol_to_pantheon-model.js');
+const Images = require('../images/image-model.js');
+const Sources = require('../sources/source-model.js');
 
+
+const SymbolConnectionRouter = require('./resources/symbolConnections/symbol_connection-router.js');
+const SymbolToPantheonRouter = require('./resources/symbolPantheons/symbol_to_pantheon-router.js');
+router.use('/connections', SymbolConnectionRouter);
+router.use('/pantheons', SymbolToPantheonRouter);
+
+const {user_restricted, mod_restricted, admin_restricted} = require('../users/restricted-middleware.js')
+const {log} = require('../logs/log-middleware.js')
 
 router.get('/', (req, res) => {
   const sort = req.query.sort || "symbol_name"
@@ -31,7 +40,6 @@ router.get('/', (req, res) => {
     // return pager object and current page of items
     return res.json({ pager, pageOfItems: pageOfItems.map(item => ({
       ...item,
-      //extra_info: JSON.parse(item.extra_info),
       thumbnail: {
         image_url: item.image_url,
         thumbnail: item.thumbnail,
@@ -60,110 +68,37 @@ router.get('/nameList', (req, res) => {
   });
 })
 
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   const { id } = req.params;
 
-  Symbols.findById(id)
-  .then(symbol => {
-    if (symbol) {
-      Symbols.getImages(id).then(images => {
-          Symbols.getThumbnail(id).then(thumbnail => {
-              Symbols.findPantheonsBySymbolId(id).then(pantheons => {
-                  Symbols.findConnectionsBySymbolId(id).then(connections => {
-                      Symbols.findKind(symbol.symbol_kind_id).then(kind => {
-                          res.json(
-                            {
-                              ...symbol,
-                              //extra_info: JSON.parse(symbol.extra_info),
-                              thumbnail,
-                              images,
-                              pantheons,
-                              connections,
-                              kind: {...kind,
-                                //default_extra_info: JSON.parse(kind.default_extra_info)
-                              }
-                            }
-                          )
-                      }).catch(err => {res.status(500).json({ message: 'Failed to get kind.' })});
-                  }).catch(err => {res.status(500).json({ message: 'Failed to get prereqs.' })});
-              }).catch(err => {res.status(500).json({ message: 'Failed to get kinds.' })});
-          }).catch(err => {res.status(500).json({ message: 'Failed to get thumbnail.' })});
-      }).catch(err => {res.status(500).json({ message: 'Failed to get images.' })});
-    } else {
-      res.status(404).json({ message: 'Could not find symbol with given id.' })
-    }
-  })
-  .catch(err => {res.status(500).json({ message: 'Failed to get symbols' });});
+  const symbol = await Symbols.findById(id)
+  if (symbol) {
+    const images = await Images.getImages('Symbol', id)
+    const thumbnail = await Images.getThumbnail('Symbol', id)
+    const sources = await Sources.getSources('Symbol', id)
+    const pantheons = await SymbolToPantheons.findBySymbol(id)
+    const connections = await SymbolConnections.findBySymbol(id)
+    const kind = await Symbols.findKind(symbol.symbol_kind_id)
+    res.json({...symbol, thumbnail, images, sources, pantheons, connections, kind })
+  } else {
+    res.status(404).json({ message: 'Could not find symbol with given id.' })
+  }
+
 });
 
-
-
-
-router.post('/', user_restricted, (req, res) => {
+router.post('/', user_restricted,  (req, res) => {
   const symbolData = req.body;
+
 
   Symbols.add(symbolData)
   .then(symbol => {
+    log(req, {}, symbol)
     res.status(201).json(symbol);
   })
   .catch (err => {
     res.status(500).json({ message: 'Failed to create new symbol' });
   });
 });
-
-router.post('/connections', user_restricted, (req, res) => {
-  const data = req.body;
-  let duplicateConnection = data.duplicateConnection
-  delete data.duplicateConnection
-
-  Symbols.addConnection(data)
-  .then(symbol => {
-    if(duplicateConnection) {
-      const main_id = data.main_symbol_id
-      const connect_id = data.connected_symbol_id
-      const relationship = data.connection_relationship
-      //In cases 2 & 5, they stay the same.
-      switch(relationship){
-        case 0:
-          data.connection_relationship = 1
-          break;
-        case 1:
-          data.connection_relationship = 0
-          break;
-        case 3:
-          data.connection_relationship = 4
-          break;
-        case 4:
-          data.connection_relationship = 3
-          break;
-      }
-      data.connected_symbol_id = main_id
-      data.main_symbol_id = connect_id
-      Symbols.addConnection(data).then(s2 => res.status(201).json(symbol));
-    }
-    else {
-      res.status(201).json(symbol);
-    }
-  })
-  .catch (err => {
-    res.status(500).json({ message: 'Failed to create new connection' });
-  });
-})
-
-
-
-router.post('/pantheons', mod_restricted, (req, res) => {
-  const data = req.body;
-
-  Symbols.addPantheonsConnection(data)
-  .then(symbol => {
-    res.status(201).json(symbol);
-  })
-  .catch (err => {
-    res.status(500).json({ message: 'Failed to create new connection' });
-  });
-})
-
 
 router.put('/:id', user_restricted, (req, res) => {
   const { id } = req.params;
@@ -172,6 +107,7 @@ router.put('/:id', user_restricted, (req, res) => {
   Symbols.findById(id)
   .then(symbol => {
     if (symbol) {
+      log(req, symbol)
       Symbols.update(changes, id)
       .then(updatedSymbol => {
         res.json(updatedSymbol);
@@ -185,66 +121,14 @@ router.put('/:id', user_restricted, (req, res) => {
   });
 });
 
-router.put('/connections/:id', user_restricted, (req, res) => {
+router.delete('/:id', user_restricted, mod_restricted, async (req, res) => {
   const { id } = req.params;
-  const changes = req.body;
-
-  Symbols.editConnection(changes, id)
-  .then(symbol => {
-    if (symbol) {
-      res.json(symbol)
-    } else {
-      res.status(404).json({ message: 'Could not find symbol with given id' });
-    }
-  })
-  .catch (err => {
-    res.status(500).json({ message: 'Failed to update symbol' });
-  });
-});
-
-router.put('/pantheons/:id', user_restricted, (req, res) => {
-  const { id } = req.params;
-  const changes = req.body;
-
-  Symbols.editPantheonsConnection(changes, id)
-  .then(symbol => {
-    if (symbol) {
-      res.json(symbol);
-    } else {
-      res.status(404).json({ message: 'Could not find symbol with given id' });
-    }
-  })
-  .catch (err => {
-    res.status(500).json({ message: 'Failed to update symbol' });
-  });
-});
-
-router.delete('/:id', mod_restricted, (req, res) => {
-  const { id } = req.params;
+  log(req, await Symbols.findById(id) )
       Symbols.remove(id)
       .then(deleted => {
         res.send("Success.")
       })
       .catch(err => { res.status(500).json({ message: 'Failed to delete symbol' }) });
 });
-
-router.delete('/connections/:connection_id', mod_restricted, (req, res) => {
-  const { connection_id } = req.params;
-      Symbols.removePantheonsConnection(connection_id)
-      .then(deleted => {
-        res.send("Success.")
-      })
-      .catch(err => { res.status(500).json({ message: 'Failed to delete symbol' }) });
-});
-
-router.delete('/pantheons/:symbol_pantheon_id', mod_restricted, (req, res) => {
-  const { symbol_pantheon_id } = req.params;
-      Symbols.removeConnection(symbol_pantheon_id)
-      .then(deleted => {
-        res.send("Success.")
-      })
-      .catch(err => { res.status(500).json({ message: 'Failed to delete symbol' }) });
-});
-
 
 module.exports = router;

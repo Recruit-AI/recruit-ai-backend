@@ -9,12 +9,18 @@ module.exports = {
   remove,
 };
 
-
-
 function find(sort, sortdir, searchTerm) {
   return db('categories')
   .orderBy(sort, sortdir)
+  .leftJoin('images', 'categories.category_id', 'images.foreign_id')
   .where('category_name', 'like', `%${searchTerm}%`)
+  .andWhere(function() {
+    this.where(function() {
+      this.where('foreign_class', "Category").andWhere('thumbnail', true)
+    }).orWhere(function() {
+      this.whereNull('foreign_class').whereNull('thumbnail')
+    })
+  })
 }
 
 function listOfNames() {
@@ -26,18 +32,6 @@ function findById(id) {
   return db('categories')
     .where( 'category_id', id )
     .first();
-}
-
-function findKindsByCategoryId(id) {
-  return db('category_to_kinds')
-    .join('kinds', 'category_to_kinds.ck_kind_id', 'kinds.kind_id')
-    .where('ck_category_id', id)
-}
-
-function findPrereqsByCategoryId(id) {
-  return db('category_prerequisites')
-    .join('categories', 'category_prerequisites.cp_prereq_id', 'categories.category_id')
-    .where('cp_category_id', id)
 }
 
 function add(category) {
@@ -53,34 +47,6 @@ function add(category) {
     })
 }
 
-function addKindsConnection(category_kind) {
-  return db('category_to_kinds')
-    .insert(category_kind)
-    .then(ids => {
-      return "Success";
-    });
-}
-
-function addPrereq(prereq) {
-  return db('category_prerequisites')
-    .insert(prereq)
-    .then(ids => {
-      return "Success";
-    });
-}
-
-function editKindsConnection(data, id) {
-  return db('category_to_kinds')
-    .where('category_kind_id', id)
-    .update(data);
-}
-
-function editPrereq(data, id) {
-  return db('category_prerequisites')
-    .where('category_prereq_id', id)
-    .update(data);
-}
-
 function update(changes, id) {
   return db('categories')
     .where('category_id', id)
@@ -90,17 +56,5 @@ function update(changes, id) {
 function remove(id) {
   return db('categories')
     .where( 'category_id', id )
-    .del();
-}
-
-function removeKindsConnection(ck_id) {
-  return db('category_to_kinds')
-    .where( 'category_kind_id', ck_id )
-    .del();
-}
-
-function removePrereq(prereq_id) {
-  return db('category_prerequisites')
-    .where('category_prereq_id', prereq_id )
     .del();
 }
