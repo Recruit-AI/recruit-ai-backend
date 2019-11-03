@@ -1,10 +1,12 @@
 const server = require('../server.js');
 const request = require('supertest');
+var knexCleaner = require('knex-cleaner');
 // our connection to the database
 const db = require('../data/dbConfig.js');
 // the data access file we are testing
 const Users = require('../components/users/user-model.js');
 //Remove the test database.
+
 
 const incomplete_creds = {username: "testuser", user_email: null, password: "test"}
 const good_user_creds = {username: "testuser", user_email: "testuser@user.com", password: "test"}
@@ -20,9 +22,11 @@ let admin_obj = {}
 let admin_token = ""
 let admin_id = 0
 
+console.log("TESTING USERS")
+
 describe("User Tests",  () => {
     it("Finding user tests", async () => {
-      await db.raw('TRUNCATE TABLE users CASCADE');
+      await knexCleaner.clean(db)
       expect(1).toBe(1);
     })
 
@@ -163,3 +167,9 @@ describe("User Tests",  () => {
         })
       })
   })
+
+
+   require('./02-pantheons.js')
+   require('./03-kinds.js')
+   require('./04-categories.js')
+   require('./05-symbols.js')

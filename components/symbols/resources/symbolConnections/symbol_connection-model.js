@@ -29,14 +29,14 @@ function findBySymbol(id) {
 
 function findById(id) {
   return db('symbol_connections')
-    .where( 'symbol_connections_id', id )
+    .where( 'symbol_connection_id', id )
     .first();
 }
 
 function add(symbol_connection) {
   return db('symbol_connections')
     .insert(symbol_connection)
-    .returning('symbol_connections_id')
+    .returning('symbol_connection_id')
     .then(res => {
       return findById(res[0])
     })
@@ -48,12 +48,12 @@ function add(symbol_connection) {
 
 function update(changes, id) {
   return db('symbol_connections')
-    .where('symbol_connections_id', id)
+    .where('symbol_connection_id', id)
     .update(changes);
 }
 
 function remove(id) {
   return db('symbol_connections')
-    .where( 'symbol_connections_id', id )
+    .where( 'symbol_connection_id', id )
     .del();
 }

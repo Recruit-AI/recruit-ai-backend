@@ -19,14 +19,14 @@ function findByCategory(id) {
 
 function findById(id) {
   return db('category_to_kinds')
-    .where( 'category_to_kind_id', id )
+    .where( 'category_kind_id', id )
     .first();
 }
 
 function add(category_to_kind) {
   return db('category_to_kinds')
     .insert(category_to_kind)
-    .returning('category_to_kind_id')
+    .returning('category_kind_id')
     .then(res => {
       return findById(res[0])
     })
@@ -38,12 +38,12 @@ function add(category_to_kind) {
 
 function update(changes, id) {
   return db('category_to_kinds')
-    .where('category_to_kind_id', id)
+    .where('category_kind_id', id)
     .update(changes);
 }
 
 function remove(id) {
   return db('category_to_kinds')
-    .where( 'category_to_kind_id', id )
+    .where( 'category_kind_id', id )
     .del();
 }

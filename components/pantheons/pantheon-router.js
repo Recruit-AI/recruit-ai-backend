@@ -2,6 +2,7 @@ const express = require('express');
 const paginate = require('jw-paginate')
 
 const Pantheons = require('./pantheon-model.js');
+const PantheonHistories = require('./resources/pantheonHistories/pantheon_history-model.js');
 const Images = require('../images/image-model.js');
 const Sources = require('../sources/source-model.js');
 
@@ -69,13 +70,13 @@ router.get('/:id', async (req, res) => {
 
   const pantheon = await Pantheons.findById(id)
   if (pantheon) {
-    const images = await Images.getImages(id)
-    const thumbnail = await Images.getThumbnail(id)
+    const images = await Images.getImages('Pantheon', id)
+    const thumbnail = await Images.getThumbnail('Pantheon', id)
     const sources = await Sources.getSources('Pantheon', id)
     const created_kinds = await Pantheons.getCreatedKinds(id)
     const uses_kinds = await Pantheons.getUsesKinds(id)
-    const history = await PantheonHistories.getHistories(id)
-    const influenced = await PantheonHistories.getInfluneced(id)
+    const history = await PantheonHistories.findHistories(id)
+    const influenced = await PantheonHistories.findInfluenced(id)
     res.json({...pantheon, thumbnail, images, sources,  history, influenced, created_kinds, uses_kinds})
   } else {
     res.status(404).json({ message: 'Could not find pantheon with given id.' })
@@ -124,8 +125,8 @@ router.put('/:id', user_restricted, (req, res) => {
 router.delete('/:id', user_restricted,  async (req, res) => {
   const { id } = req.params;
 
-  log(req, await Patheons.findById(id) )
-  Pantheons.removeHistoriesById(id)
+  log(req, await Pantheons.findById(id) )
+  PantheonHistories.removeHistoriesByPantheons(id)
   .then(deleted => {
       //Be sure to log pantheon history ids as they are getting
       Pantheons.remove(id)

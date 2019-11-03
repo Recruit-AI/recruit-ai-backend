@@ -41,10 +41,6 @@ function add(category) {
     .then(res => {
       return findById(res[0])
     })
-    .catch(err => {
-      console.log(err)
-      return err
-    })
 }
 
 function update(changes, id) {

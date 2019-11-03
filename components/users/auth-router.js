@@ -10,6 +10,7 @@ const {user_restricted, mod_restricted, admin_restricted} = require('./restricte
 
 const router = express.Router();
 
+//ami
 router.post('/login', (req, res) => {
   let {username, password} = req.body
 

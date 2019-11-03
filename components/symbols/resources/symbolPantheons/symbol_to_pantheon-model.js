@@ -20,14 +20,14 @@ function findBySymbol(id) {
 
 function findById(id) {
   return db('symbol_to_pantheons')
-    .where( 'symbols_to_pantheons_id', id )
+    .where( 'symbol_pantheon_id', id )
     .first();
 }
 
 function add(symbol_to_pantheon) {
   return db('symbol_to_pantheons')
     .insert(symbol_to_pantheon)
-    .returning('symbols_to_pantheons_id')
+    .returning('symbol_pantheon_id')
     .then(res => {
       return findById(res[0])
     })
@@ -39,12 +39,12 @@ function add(symbol_to_pantheon) {
 
 function update(changes, id) {
   return db('symbol_to_pantheons')
-    .where('symbols_to_pantheons_id', id)
+    .where('symbol_pantheon_id', id)
     .update(changes);
 }
 
 function remove(id) {
   return db('symbol_to_pantheons')
-    .where( 'symbols_to_pantheons_id', id )
+    .where( 'symbol_pantheon_id', id )
     .del();
 }

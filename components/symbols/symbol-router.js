@@ -88,12 +88,13 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', user_restricted,  (req, res) => {
   const symbolData = req.body;
-
-
   Symbols.add(symbolData)
   .then(symbol => {
-    log(req, {}, symbol)
-    res.status(201).json(symbol);
+    if(symbol){
+      log(req, {}, symbol)
+      res.status(201).json(symbol);
+    }
+    else { res.status(500).json({ message: 'Failed to create new symbol' }); }
   })
   .catch (err => {
     res.status(500).json({ message: 'Failed to create new symbol' });

@@ -16,7 +16,7 @@ const CategoryPantheonRouter = require('./resources/categoryPantheons/category_t
 const CategoryKindRouter = require('./resources/categoryKinds/category_to_kind-router.js');
 const CategorySymbolRouter = require('./resources/categorySymbols/category_to_symbol-router.js');
 
-router.use('/prereqs', CategoryPrereqRouter);
+router.use('/prerequisites', CategoryPrereqRouter);
 router.use('/pantheons', CategoryPantheonRouter);
 router.use('/kinds', CategoryKindRouter);
 router.use('/symbols', CategorySymbolRouter);
@@ -69,11 +69,12 @@ router.get('/:id', async (req, res) => {
     const images = await Images.getImages('Category', id)
     const thumbnail = await Images.getThumbnail('Category', id)
     const sources = await Sources.getSources('Category', id)
-    const categoryPrereqs = await CategoryPrereqs.findByCategory(id)
-    const categoryKinds = await CategoryKinds.findByCategory(id)
-    const categorySymbols = await CategorySymbols.findByCategory(id)
-    const categoryPantheons = await CategoryPantheons.findByCategory(id)
-    res.json({...category, thumbnail, images, sources, categoryPrereqs, categoryKinds, categorySymbols, categoryPantheons})
+    const prerequisites = await CategoryPrereqs.findByCategory(id)
+    const advanced = await CategoryPrereqs.findAdvancedByCategory(id)
+    const kinds = await CategoryKinds.findByCategory(id)
+    const symbols = await CategorySymbols.findByCategory(id)
+    const pantheons = await CategoryPantheons.findByCategory(id)
+    res.json({...category, thumbnail, images, sources, prerequisites, advanced, kinds, symbols, pantheons})
   } else {
     res.status(404).json({ message: 'Could not find category with given id.' })
   }
@@ -115,6 +116,7 @@ router.put('/:id',user_restricted,  (req, res) => {
 
 router.delete('/:id', user_restricted, mod_restricted, async (req, res) => {
   const { id } = req.params;
+
   log(req, await Categories.findById(id) )
       Categories.remove(id)
       .then(deleted => {

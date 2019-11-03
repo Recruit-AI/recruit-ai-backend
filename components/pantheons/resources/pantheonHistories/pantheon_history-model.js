@@ -6,7 +6,8 @@ module.exports = {
   findById,
   add,
   update,
-  remove
+  remove,
+  removeHistoriesByPantheons
 };
 
 
@@ -31,14 +32,14 @@ function findInfluenced(id) {
 
 function findById(id) {
   return db('pantheons_history')
-    .where( 'pantheons_history_id', id )
+    .where( 'pantheon_history_id', id )
     .first();
 }
 
 function add(kind_to_pantheon) {
   return db('pantheons_history')
     .insert(kind_to_pantheon)
-    .returning('pantheons_history_id')
+    .returning('pantheon_history_id')
     .then(res => {
       return findById(res[0])
     })
@@ -50,13 +51,13 @@ function add(kind_to_pantheon) {
 
 function update(changes, id) {
   return db('pantheons_history')
-    .where('pantheons_history_id', id)
+    .where('pantheon_history_id', id)
     .update(changes);
 }
 
 function remove(id) {
   return db('pantheons_history')
-    .where( 'pantheons_history_id', id )
+    .where( 'pantheon_history_id', id )
     .del();
 }
 

@@ -1,14 +1,16 @@
 
 const jwt = require('jsonwebtoken')
+const Users = require('./user-model.js')
 
-function user_restricted(req, res, next) {
+const user_restricted =  (req, res, next) => {
   const token = req.headers.authorization
   if(token){
-    jwt.verify(token, process.env.JWT_SECRET, (err, decodedToken) => {
+    jwt.verify(token, process.env.JWT_SECRET, async (err, decodedToken) => {
       if(err){
         res.status(401).json({message: "Error.", error: err});
         return
       } else {
+        decodedToken.user = await Users.findById(decodedToken.user.user_id)
         req.decodedToken = decodedToken
         next();
       }

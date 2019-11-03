@@ -1,8 +1,7 @@
 TODOS
 Select statements for readability & safety
 
-fix log database calls
-Edits return the item for resources
-write tests for main & sub resources
-Write log tests
-Write image & resource tests
+//Edits return the item for resources
+//write tests for main & sub resources
+//Write log tests
+//Write image & resource tests
