@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken')
 //Possibly delete- const secrets = require('../../config/secrets.js');
 
 const {user_restricted, mod_restricted, admin_restricted} = require('./restricted-middleware.js')
-const {log} = require('../logs/log-middleware.js')
+const {log} = require('../userLogs/log-middleware.js')
 
 const router = express.Router();
 

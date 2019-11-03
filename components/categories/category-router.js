@@ -22,7 +22,7 @@ router.use('/kinds', CategoryKindRouter);
 router.use('/symbols', CategorySymbolRouter);
 
 const {user_restricted, mod_restricted, admin_restricted} = require('../users/restricted-middleware.js')
-const {log} = require('../logs/log-middleware.js')
+const {log} = require('../userLogs/log-middleware.js')
 
 router.get('/', (req, res) => {
   const sort = req.query.sort || "category_name"

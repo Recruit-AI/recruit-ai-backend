@@ -3,7 +3,7 @@ const express = require('express');
 const Images = require('./image-model.js');
 
 const {user_restricted, mod_restricted, admin_restricted} = require('../users/restricted-middleware.js')
-const {log} = require('../logs/log-middleware.js')
+const {log} = require('../userLogs/log-middleware.js')
 
 const multer = require('../../config/multer')
 const multerUploads = multer.multerUploads

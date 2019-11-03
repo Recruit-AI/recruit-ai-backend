@@ -4,7 +4,7 @@ const CategoryToPantheons = require('./category_to_pantheon-model.js');
 
 const router = express.Router();
 const {user_restricted, mod_restricted, admin_restricted} = require('../../../users/restricted-middleware.js')
-const {log} = require('../../../logs/log-middleware.js')
+const {log} = require('../../../userLogs/log-middleware.js')
 
 router.get('/', (req, res) => {
   CategoryToPantheons.find()
