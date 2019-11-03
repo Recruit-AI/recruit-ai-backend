@@ -6,7 +6,7 @@ server.use(express.json());
 require('dotenv').config();
 
 //These are the routes for logs, sources, and images, providing much of the supporting data.
-const LogRouter = require('./components/logs/log-router.js');
+//const LogRouter = require('./components/logs/log-router.js');
 const SourceRouter = require('./components/sources/source-router.js');
 const ImageRouter = require('./components/images/image-router.js');
 //These are the main data resources, what we care about.
