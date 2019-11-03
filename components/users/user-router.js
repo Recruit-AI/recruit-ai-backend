@@ -4,23 +4,17 @@ const Users = require('./user-model.js');
 
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const secrets = require('../../config/secrets.js');
+//Possibly delete- const secrets = require('../../config/secrets.js');
 
-const {user_restricted, mod_restricted, admin_restricted} = require('../middleware.js')
+const {user_restricted, mod_restricted, admin_restricted} = require('./restricted-middleware.js')
+const {log} = require('../logs/log-middleware.js')
 
 const router = express.Router();
 
-
-router.get('/admin-list', admin_restricted, (req, res) => {
-  Users.find()
-  .then(users => {
-    res.json(users);
-  })
-  .catch(err => {
-    res.status(500).json({ message: 'Failed to get users' });
-  });
-});
-
+const AuthRouter = require('./auth-router.js');
+const AdminRouter = require('./admin-router.js');
+router.use('/auth', AuthRouter);
+router.use('/admin', AdminRouter);
 
 router.get('/profile/:id', (req, res) => {
   const { id } = req.params;
@@ -40,103 +34,40 @@ router.get('/profile/:id', (req, res) => {
   .catch(err => {res.status(500).json({ message: 'Failed to get users' });});
 });
 
+router.get('/dashboard', user_restricted, (req, res) => {
+  const user = req.decodedToken.user;
+  const id = user.user_id
+
+    Users.findById(id)
+    .then(userProfile => {
+        res.json(userProfile)
+      });
+    })
 
 router.post('/register', (req, res) => {
   const userData = req.body;
+  userData.user_role = 1
+  delete userData.user_id
+  delete userData.user_verified
 
   userData.password = bcrypt.hashSync(userData.password, 10)
 
   Users.add(userData)
   .then(user => {
-    res.status(201).json(user);
+    if(user.user_id) {res.status(201).json(user)}
+    else {res.status(500).json(user)};
   })
   .catch (err => {
     res.status(500).json({ message: 'Failed to create new user' });
   });
 });
 
-router.post('/login', (req, res) => {
-  let {username, password} = req.body
+router.get("/verify/:id", (req, res) => {
+  const id = req.params.id
+  Users.update({user_verified: true}, id)
+  .then(response => res.json(response))
+  .catch(err => { res.status(500).json({ message: 'Failed.' }) })
 
-  Users.findByUsername(username)
-  .then(user => {
-    if(user && bcrypt.compareSync(password, user.password)){
-      const token = generateToken(user)
-      res.status(200).json({message: "Welcome!", token: token, user: user})
-    } else {
-      res.status(500).json({message: "Invalid Credentials."})
-    }
-  })
-  .catch(error => {
-    res.status(500).json({message: "Invalid Credentials."})
-  })
-});
-
-
-router.put('/:id', profile_restricted, (req, res) => {
-  const { id } = req.params;
-  const changes = req.body;
-
-  Users.findById(id)
-  .then(user => {
-    if (user) {
-      Users.update(changes, id)
-      .then(updatedUser => {
-        res.json(updatedUser);
-      });
-    } else {
-      res.status(404).json({ message: 'Could not find user with given id' });
-    }
-  })
-  .catch (err => {
-    res.status(500).json({ message: 'Failed to update user' });
-  });
-});
-
-
-router.delete('/:id', admin_restricted, (req, res) => {
-  const { id } = req.params;
-      Users.remove(id)
-      .then(deleted => {
-        res.send("Success.")
-      })
-      .catch(err => { res.status(500).json({ message: 'Failed to delete user' }) });
-});
-
-router.delete('/logout', (req, res) => {
-  req.session.user = null;
-  res.status(200).json({message: "Logged out!"})
-});
-
-function profile_restricted(req, res, next) {
-  // const logged_in_user = req.session.user
-  // const {id} = req.params
-  //
-  // console.log( req.session.user.user_id , Number.parseInt(id) )
-  // if(logged_in_user){
-  //   if(logged_in_user.role >= 3 || logged_in_user.user_id === Number.parseInt(id)){
-  //     next();
-  //   } else {
-  //     res.status(400).json({message: "You do not have permission to do this."})
-  //   }
-  // } else{
-  //   res.status(400).json({message: "Please log in."})
-  // }
-  next();
-}
-
-function generateToken(user) {
-  const payload = {
-    subject: user.id, // sub in payload is what the token is about
-    user: user
-  };
-
-  const options = {
-    expiresIn: '1d', // show other available options in the library's documentation
-  };
-
-  // extract the secret away so it can be required and used where needed
-  return jwt.sign(payload, process.env.JWT_SECRET, options); // this method is synchronous
-}
+})
 
 module.exports = router;

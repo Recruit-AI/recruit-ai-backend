@@ -4,20 +4,11 @@ module.exports = {
   find,
   listOfNames,
   findById,
-  findByHistoryId,
-  historyById,
-  influencedById,
   getCreatedKinds,
   getUsesKinds,
-  getImages,
-  getThumbnail,
   add,
-  addHistory,
-  editHistory,
   update,
   remove,
-  removeHistoriesById,
-  removeHistory
 };
 
 
@@ -25,10 +16,18 @@ module.exports = {
 function find(sort, sortdir, searchTerm) {
   return db('pantheons')
   .orderBy(sort, sortdir)
-  .join('images', 'pantheons.pantheon_id', 'images.foreign_id')
-  .where('foreign_class', "Pantheon")
+  .leftJoin('images', 'pantheons.pantheon_id', 'images.foreign_id')
   .where('pantheon_name', 'like', `%${searchTerm}%`)
-  .where('thumbnail', 1)
+  .andWhere(function() {
+    this.where(function() {
+      this.where('foreign_class', "Pantheon").andWhere('thumbnail', true)
+    }).orWhere(function() {
+      this.whereNull('foreign_class').whereNull('thumbnail')
+    })
+  })
+  .then()
+  .catch(err => console.log(err))
+
 }
 
 function listOfNames() {
@@ -42,28 +41,6 @@ function findById(id) {
     .first();
 }
 
-function findByHistoryId(id) {
-  return db('pantheons_history')
-    .where( 'pantheon_history_id', id )
-    .first();
-}
-
-//Returns an array of simple pantheon objects based on the provided id. Only returns short fields, no longtext fields.
-function historyById(id) {
-  return db('pantheons_history')
-  .select('pantheon_history_id', 'influenced_id', 'influencer_id', 'pantheon_id', 'pantheon_name', 'pantheon_description', 'start_year', 'end_year')
-  .join('pantheons', 'pantheons_history.influencer_id', 'pantheons.pantheon_id')
-  .where('influenced_id', id)
-}
-
-//Returns an array of simple pantheon objects based on the provided id. Only returns short fields, no longtext fields.
-function influencedById(id) {
-  return db('pantheons_history')
-  .select('pantheon_history_id', 'influenced_id', 'influencer_id', 'pantheon_id', 'pantheon_name', 'pantheon_description', 'start_year', 'end_year')
-  .join('pantheons', 'pantheons_history.influenced_id', 'pantheons.pantheon_id')
-  .where('influencer_id', id)
-}
-
 function getCreatedKinds(id) {
   return db('kinds')
   .where('creator_pantheon_id', id)
@@ -75,32 +52,13 @@ function getUsesKinds(id) {
   .where('kp_pantheon_id', id)
 }
 
-function getImages(id) {
-  return db('images').where("foreign_id", id).where("foreign_class", "Pantheon").where("thumbnail", false)
-}
-
-function getThumbnail(id) {
-  return db('images').where("foreign_id", id).where("foreign_class", "Pantheon").where("thumbnail", true).first()
-}
-
 function add(pantheon) {
   return db('pantheons')
     .insert(pantheon)
-    .then(ids => {
-      return findById(ids[0]);
-    });
-}
-
-function addHistory(data) {
-    return db('pantheons_history')
-    .insert(data)
-    .then(ids => {
-      return ids[0]
-    });
-}
-
-function editHistory(data, id) {
-   return db('pantheons_history').where('pantheon_history_id', id).update(data);
+    .returning('pantheon_id')
+    .then(res => {
+      return findById(res[0])
+    })
 }
 
 function update(changes, id) {
@@ -112,18 +70,5 @@ function update(changes, id) {
 function remove(id) {
   return db('pantheons')
     .where( 'pantheon_id', id )
-    .del();
-}
-
-function removeHistoriesById(id){
-  return db('pantheons_history')
-    .where('influenced_id', id)
-    .orWhere('influencer_id', id)
-    .del();
-}
-
-function removeHistory(id){
-  return db('pantheons_history')
-    .where('pantheon_history_id', id)
     .del();
 }

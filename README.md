@@ -1,4 +1,7 @@
 TODOS
-Correct errors, good messages for them
 Select statements for readability & safety
-Seed files
+
+//Edits return the item for resources
+//write tests for main & sub resources
+//Write log tests
+//Write image & resource tests

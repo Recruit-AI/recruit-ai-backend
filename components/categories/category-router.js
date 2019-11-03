@@ -1,12 +1,28 @@
 const express = require('express');
 const paginate = require('jw-paginate');
-
-const Categories = require('./category-model.js');
-
-const {user_restricted, mod_restricted, admin_restricted} = require('../middleware.js')
-
 const router = express.Router();
 
+const Categories = require('./category-model.js');
+const CategoryPrereqs = require('./resources/categoryPrerequisites/category_prerequisite-model.js');
+const CategoryPantheons = require('./resources/categoryPantheons/category_to_pantheon-model.js');
+const CategoryKinds = require('./resources/categoryKinds/category_to_kind-model.js');
+const CategorySymbols = require('./resources/categorySymbols/category_to_symbol-model.js');
+
+const Images = require('../images/image-model.js');
+const Sources = require('../sources/source-model.js');
+
+const CategoryPrereqRouter = require('./resources/categoryPrerequisites/category_prerequisite-router.js');
+const CategoryPantheonRouter = require('./resources/categoryPantheons/category_to_pantheon-router.js');
+const CategoryKindRouter = require('./resources/categoryKinds/category_to_kind-router.js');
+const CategorySymbolRouter = require('./resources/categorySymbols/category_to_symbol-router.js');
+
+router.use('/prerequisites', CategoryPrereqRouter);
+router.use('/pantheons', CategoryPantheonRouter);
+router.use('/kinds', CategoryKindRouter);
+router.use('/symbols', CategorySymbolRouter);
+
+const {user_restricted, mod_restricted, admin_restricted} = require('../users/restricted-middleware.js')
+const {log} = require('../logs/log-middleware.js')
 
 router.get('/', (req, res) => {
   const sort = req.query.sort || "category_name"
@@ -45,35 +61,31 @@ router.get('/nameList', (req, res) => {
   });
 })
 
-
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   const { id } = req.params;
 
-  Categories.findById(id)
-  .then(category => {
-    if (category) {
-      Categories.getImages(id).then(images => {
-          Categories.getThumbnail(id).then(thumbnail => {
-              Categories.findKindsByCategoryId(id).then(kinds => {
-                  Categories.findPrereqsByCategoryId(id).then(prereqs => {
-                      res.json({...category, thumbnail, images, kinds, prereqs})
-                  }).catch(err => {res.status(500).json({ message: 'Failed to get prereqs.' })});
-              }).catch(err => {res.status(500).json({ message: 'Failed to get kinds.' })});
-          }).catch(err => {res.status(500).json({ message: 'Failed to get thumbnail.' })});
-      }).catch(err => {res.status(500).json({ message: 'Failed to get images.' })});
-    } else {
-      res.status(404).json({ message: 'Could not find category with given id.' })
-    }
-  })
-  .catch(err => {res.status(500).json({ message: 'Failed to get categories' });});
+  const category = await Categories.findById(id)
+  if (category) {
+    const images = await Images.getImages('Category', id)
+    const thumbnail = await Images.getThumbnail('Category', id)
+    const sources = await Sources.getSources('Category', id)
+    const prerequisites = await CategoryPrereqs.findByCategory(id)
+    const advanced = await CategoryPrereqs.findAdvancedByCategory(id)
+    const kinds = await CategoryKinds.findByCategory(id)
+    const symbols = await CategorySymbols.findByCategory(id)
+    const pantheons = await CategoryPantheons.findByCategory(id)
+    res.json({...category, thumbnail, images, sources, prerequisites, advanced, kinds, symbols, pantheons})
+  } else {
+    res.status(404).json({ message: 'Could not find category with given id.' })
+  }
 });
 
-
-router.post('/', mod_restricted, (req, res) => {
+router.post('/', user_restricted, (req, res) => {
   const categoryData = req.body;
 
   Categories.add(categoryData)
   .then(category => {
+    log(req, {}, category)
     res.status(201).json(category);
   })
   .catch (err => {
@@ -81,38 +93,14 @@ router.post('/', mod_restricted, (req, res) => {
   });
 });
 
-router.post('/prereqs', mod_restricted, (req, res) => {
-  const data = req.body;
-
-  Categories.addPrereq(data)
-  .then(category => {
-    res.status(201).json(category);
-  })
-  .catch (err => {
-    res.status(500).json({ message: 'Failed to create new connection' });
-  });
-})
-
-router.post('/kinds', mod_restricted, (req, res) => {
-  const data = req.body;
-
-  Categories.addKindsConnection(data)
-  .then(category => {
-    res.status(201).json(category);
-  })
-  .catch (err => {
-    res.status(500).json({ message: 'Failed to create new connection' });
-  });
-})
-
-
-router.put('/:id', mod_restricted, (req, res) => {
+router.put('/:id',user_restricted,  (req, res) => {
   const { id } = req.params;
   const changes = req.body;
 
   Categories.findById(id)
   .then(category => {
     if (category) {
+      log(req, category)
       Categories.update(changes, id)
       .then(updatedCategory => {
         res.json(updatedCategory);
@@ -126,68 +114,15 @@ router.put('/:id', mod_restricted, (req, res) => {
   });
 });
 
-router.put('/kinds/:id', mod_restricted, (req, res) => {
+router.delete('/:id', user_restricted, mod_restricted, async (req, res) => {
   const { id } = req.params;
-  const changes = req.body;
 
-  Categories.editKindsConnection(changes, id)
-  .then(category => {
-    if (category) {
-      res.json(category);
-    } else {
-      res.status(404).json({ message: 'Could not find category with given id' });
-    }
-  })
-  .catch (err => {
-    res.status(500).json({ message: 'Failed to update category' });
-  });
-});
-
-router.put('/prereqs/:id', mod_restricted, (req, res) => {
-  const { id } = req.params;
-  const changes = req.body;
-
-  Categories.editPrereq(changes, id)
-  .then(category => {
-    if (category) {
-      res.json(category);
-    } else {
-      res.status(404).json({ message: 'Could not find category with given id' });
-    }
-  })
-  .catch (err => {
-    res.status(500).json({ message: 'Failed to update category' });
-  });
-});
-
-
-
-router.delete('/:id', mod_restricted, (req, res) => {
-  const { id } = req.params;
+  log(req, await Categories.findById(id) )
       Categories.remove(id)
       .then(deleted => {
         res.send("Success.")
       })
       .catch(err => { res.status(500).json({ message: 'Failed to delete category' }) });
 });
-
-router.delete('/kinds/:ck_id', mod_restricted, (req, res) => {
-  const { ck_id } = req.params;
-      Categories.removeKindsConnection(ck_id)
-      .then(deleted => {
-        res.send("Success.")
-      })
-      .catch(err => { res.status(500).json({ message: 'Failed to delete category' }) });
-});
-
-router.delete('/prereqs/:prereq_id', mod_restricted, (req, res) => {
-  const { prereq_id } = req.params;
-      Categories.removePrereq(prereq_id)
-      .then(deleted => {
-        res.send("Success.")
-      })
-      .catch(err => { res.status(500).json({ message: 'Failed to delete category' }) });
-});
-
 
 module.exports = router;
