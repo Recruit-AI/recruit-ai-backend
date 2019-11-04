@@ -6,8 +6,18 @@ const {user_restricted, mod_restricted, admin_restricted} = require('../users/re
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
+router.get('/all', (req, res) => {
   Logs.find()
+  .then(logs => {
+    res.json(logs);
+  })
+  .catch(err => {
+    res.status(500).json({ message: 'Failed to get logs' });
+  });
+});
+
+router.get('/unconfirmed', (req, res) => {
+  Logs.findUnconfirmed()
   .then(logs => {
     res.json(logs);
   })
@@ -37,7 +47,6 @@ router.put('/:id/undo', user_restricted, async (req, res) => {
   const updatedLog = await Logs.update( {notes, log_confirmed: false, log_confirming_user_id: user_id} , id)
 
   let classInfo = {}
-  console.log(updatedLog)
 
   //Return the database and the name of the id field
   switch(updatedLog.route) {
