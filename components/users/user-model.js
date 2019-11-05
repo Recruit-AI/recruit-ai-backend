@@ -13,8 +13,9 @@ module.exports = {
 
 
 
-function find() {
+function find(username) {
   return db('users')
+    .where('username', 'LIKE', `%${searchTerm}%`)
 }
 
 function findById(id) {

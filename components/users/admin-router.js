@@ -13,7 +13,9 @@ router.use(user_restricted, mod_restricted)
 //MODERATOR ROUTES
 //Returns a list of users that can probably be searched
 router.get('/user-list', (req, res) => {
-  Users.find()
+  const searchTerm = req.query.search || ""
+
+  Users.find(searchTerm)
   .then(users => {
     res.json(users);
   })
