@@ -50,7 +50,11 @@ function add(user) {
 function update(changes, id) {
   return db('users')
     .where('user_id', id)
-    .update(changes);
+    .update(changes)
+    .returning('user_id')
+    .then(res => {
+      return findById(res[0])
+    });
 }
 
 function remove(id) {

@@ -44,30 +44,6 @@ router.get('/dashboard', user_restricted, (req, res) => {
       });
     })
 
-router.post('/register', (req, res) => {
-  const userData = req.body;
-  userData.user_role = 1
-  delete userData.user_id
-  delete userData.user_verified
 
-  userData.password = bcrypt.hashSync(userData.password, 10)
-
-  Users.add(userData)
-  .then(user => {
-    if(user.user_id) {res.status(201).json(user)}
-    else {res.status(500).json(user)};
-  })
-  .catch (err => {
-    res.status(500).json({ message: 'Failed to create new user' });
-  });
-});
-
-router.get("/verify/:id", (req, res) => {
-  const id = req.params.id
-  Users.update({user_verified: true}, id)
-  .then(response => res.json(response))
-  .catch(err => { res.status(500).json({ message: 'Failed.' }) })
-
-})
 
 module.exports = router;
