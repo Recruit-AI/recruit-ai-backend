@@ -4,7 +4,6 @@ const Users = require('./user-model.js');
 
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const bcrypt = require('bcryptjs')
 
 const {user_restricted, mod_restricted, admin_restricted} = require('./restricted-middleware.js')
 const {log} = require('../userLogs/log-middleware.js')
