@@ -4,7 +4,7 @@ const Users = require('./user-model.js');
 
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-//Possibly delete- const secrets = require('../../config/secrets.js');
+const bcrypt = require('bcryptjs')
 
 const {user_restricted, mod_restricted, admin_restricted} = require('./restricted-middleware.js')
 const {log} = require('../userLogs/log-middleware.js')
@@ -51,6 +51,8 @@ router.put('/edit', user_restricted, (req, res) => {
   delete changes['user_role']
   delete changes['user_id']
   delete changes['user_verified']
+
+  changes.password = bcrypt.hashSync(changes.password, 10)
 
   Users.findById(id)
   .then(user => {
