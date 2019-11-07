@@ -7,6 +7,7 @@ require('dotenv').config();
 
 //These are the routes for logs, sources, and images, providing much of the supporting data.
 const LogRouter = require('./components/userLogs/log-router.js');
+const FeedbackRouter = require('./components/feedback/feedback-router.js');
 const SourceRouter = require('./components/sources/source-router.js');
 const ImageRouter = require('./components/images/image-router.js');
 //These are the main data resources, what we care about.
@@ -19,6 +20,7 @@ const UserRouter = require('./components/users/user-router.js');
 
 //Log all creates & edits with the user who did so. Ability to view logs & undo changes.
 server.use('/api/logs', LogRouter);
+server.use('/api/feedback', FeedbackRouter);
 //Sources provide a link to an external website where we find our information. Attached to all in main database.
 server.use('/api/sources', SourceRouter);
 //Thumbnail & image gallery functionality.
