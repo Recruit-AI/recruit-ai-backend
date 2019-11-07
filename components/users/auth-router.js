@@ -26,7 +26,7 @@ router.post('/register', (req, res) => {
   Users.add(userData)
   .then(user => {
     if(user.user_id) {
-      const link = `http://localhost:4001/api/users/auth/verify/${user.user_id}/${user_hash}` //This should be a front end link
+      const link = `http://localhost:4001/api/users/auth/verify/${user.user_id}/${encodeURIComponent(user_hash)}` //This should be a front end link
       const text = `Here is the link you should copy & paste into your browser: ${link}`
       const html = `<a href="${link}">Click Here</a> to verify your account.`
       sendEmail(user, "Please register your Grimwire account", text, html)
@@ -51,23 +51,39 @@ router.get("/verify/:user_id/:user_hash", async (req, res) => {
   }
 })
 
-router.get("resetPassword/:username/", async (req, res) => {
-  const {user_hash, username} = req.params
+router.get("/forgottenPassword/:username", async (req, res) => {
+  const {username} = req.params
 
   const user = await Users.findByUsername(username)
+  const user_hash = bcrypt.hashSync(user.username, 2)
 
   if(user) {
-    const link = `http://localhost:4001/api/users/auth/verify/${user.user_id}/${user_hash}` //This should be a front end link
+    const link = `http://localhost:4001/api/users/auth/resetPassword/${username}/${encodeURIComponent(user_hash)}` //This should be a front end link
     const text = `Here is the link you should copy & paste into your browser: ${link}`
     const html = `<a href="${link}">Click Here</a> to reset your password.`
     sendEmail(user, "Your forgotten password link,", text, html)
+  }
+
+  //Return a false success even if user doesn't exist
+  res.json({message: "Success! Please check your email."})
+})
+
+router.put("/resetPassword/:username/:user_hash", async (req, res) => {
+  const {user_hash, username} = req.params
+  const {password} = req.body
+
+  const user = await Users.findByUsername(username)
+
+  const hashedPassword = bcrypt.hashSync(password, 10)
+
+  if( user && bcrypt.compareSync(username, user_hash) ) {
+    const updatedUser = await Users.update({password: hashedPassword}, user.user_id)
+    res.json({message: "All set.", updatedUser})
   } else {
-    //Return like nothing wrong, fake success
+    res.send("Unkwown Error.")
   }
 
 })
-
-:user_hash
 
 router.post('/login', (req, res) => {
   let {username, password} = req.body
@@ -146,7 +162,7 @@ const sendEmail = (user, subject, text, html) => {
       }
   });
   let mailOptions = {
-      to: 'thejhubbs@gmail.com',
+      to: user.user_email,
       subject: subject,
       text: text,
       html: html
