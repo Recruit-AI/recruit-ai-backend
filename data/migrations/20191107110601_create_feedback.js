@@ -7,7 +7,7 @@ exports.up = function(knex, Promise) {
       tbl.text('feedback_message').notNullable();
       tbl.text('feedback_name')
       tbl.text('feedback_email')
-      tbl.text('logged').defaultTo(false)
+      tbl.boolean('logged').defaultTo(false)
     })
 
 };

@@ -5,7 +5,7 @@ const Feedbacks = require('./feedback-model.js');
 const router = express.Router();
 const {user_restricted, mod_restricted, admin_restricted} = require('../users/restricted-middleware.js')
 
-router.get('/all', admin_restricted, (req, res) => {
+router.get('/all', user_restricted, admin_restricted, (req, res) => {
   Feedbacks.find()
   .then(feedbacks => {
     res.json(feedbacks);
@@ -15,7 +15,7 @@ router.get('/all', admin_restricted, (req, res) => {
   });
 });
 
-router.get('/unlogged', admin_restricted, (req, res) => {
+router.get('/unlogged', user_restricted, admin_restricted, (req, res) => {
   Feedbacks.findUnlogged()
   .then(feedbacks => {
     res.json(feedbacks);
@@ -25,7 +25,7 @@ router.get('/unlogged', admin_restricted, (req, res) => {
   });
 });
 
-router.get('/:id', admin_restricted, (req, res) => {
+router.get('/:id', user_restricted, admin_restricted, (req, res) => {
   const { id } = req.params;
 
   Feedbacks.findById(id)
@@ -53,7 +53,7 @@ router.post('/', (req, res) => {
 
 });
 
-router.put('/confirm/:id', admin_restricted, (req, res) => {
+router.put('/confirm/:id', user_restricted, admin_restricted, (req, res) => {
   const { id } = req.params;
 
   Feedbacks.update({logged: true}, id)

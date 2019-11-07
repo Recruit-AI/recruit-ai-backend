@@ -41,7 +41,15 @@ function add(feedback) {
 function update(changes, id) {
   return db('feedbacks')
     .where('feedback_id', id)
-    .update(changes);
+    .update(changes)
+    .returning('feedback_id')
+    .then(res => {
+      return findById(res[0])
+    })
+    .catch(err => {
+      console.log(err)
+      return err
+    });
 }
 
 function remove(id) {
