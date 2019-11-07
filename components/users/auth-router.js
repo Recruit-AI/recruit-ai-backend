@@ -109,29 +109,7 @@ router.delete('/logout', user_restricted, (req, res) => {
 });
 
 
-router.put('/edit', user_restricted, (req, res) => {
-  const changes = req.body;
-  const user = req.decodedToken.user;
-  const id = user.user_id
-  delete changes['user_role']
-  delete changes['user_id']
-  delete changes['user_verified']
 
-  Users.findById(id)
-  .then(user => {
-    if (user) {
-      Users.update(changes, id)
-      .then(updatedUser => {
-        res.json(updatedUser);
-      });
-    } else {
-      res.status(404).json({ message: 'Could not find user with given id' });
-    }
-  })
-  .catch (err => {
-    res.status(500).json({ message: 'Failed to update user' });
-  });
-});
 
 
 function generateToken(user) {
