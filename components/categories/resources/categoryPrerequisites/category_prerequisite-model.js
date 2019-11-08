@@ -15,7 +15,7 @@ module.exports = {
 function findByCategory(id) {
   return db('category_prerequisites')
   .leftJoin('categories', 'category_prerequisites.cp_prereq_id', 'categories.category_id')
-  .select('category_prereq_id', 'cp_prereq_id', 'cp_description', 'category_name', 'category_description')
+  .select('category_prereq_id', 'prereq_id', 'cp_description', 'category_name', 'category_description')
   .where('cp_category_id', id)
 }
 

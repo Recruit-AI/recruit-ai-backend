@@ -14,7 +14,7 @@ module.exports = {
 function findByCategory(id) {
   return db('category_to_symbols')
   .leftJoin('symbols', 'category_to_symbols.cs_symbol_id', 'symbols.symbol_id')
-  .select('category_symbol_id', 'cs_symbol_id', 'cs_description', 'symbol_name', 'symbol_description')
+  .select('category_symbol_id', 'symbol_id', 'cs_description', 'symbol_name', 'symbol_description')
   .where('cs_category_id', id)
 }
 

@@ -14,7 +14,7 @@ module.exports = {
 function findBySymbol(id) {
   return db('symbol_to_pantheons')
   .leftJoin('pantheons', 'symbol_to_pantheons.sp_pantheon_id', 'pantheons.pantheon_id')
-  .select('symbol_pantheon_id', 'sp_pantheon_id', 'sp_description', 'pantheon_name', 'pantheon_description')
+  .select('symbol_pantheon_id', 'pantheon_id', 'sp_description', 'pantheon_name', 'pantheon_description')
   .where('sp_symbol_id', id)
 }
 
