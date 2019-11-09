@@ -72,38 +72,46 @@ router.get('/:id', async (req, res) => {
 });
 
 
-router.post('/', user_restricted, (req, res) => {
+router.post('/', user_restricted, async (req, res) => {
   const kindData = req.body;
 
-  Kinds.add(kindData)
-  .then(kind => {
-    log(req, {}, kind)
-    res.status(201).json(kind);
-  })
-  .catch (err => {
-    res.status(500).json({ message: 'Failed to create new kind' });
-  });
+  if(await Kinds.findByName(kindData.kind_name)) {
+    res.status(400).json({message: "A record with this name already exists."})
+  } else {
+    Kinds.add(kindData)
+    .then(kind => {
+      log(req, {}, kind)
+      res.status(201).json(kind);
+    })
+    .catch (err => {
+      res.status(500).json({ message: 'Failed to create new kind' });
+    });
+  }
 });
 
-router.put('/:id', user_restricted, (req, res) => {
+router.put('/:id', user_restricted, async (req, res) => {
   const { id } = req.params;
   const changes = req.body;
 
-  Kinds.findById(id)
-  .then(kind => {
-    if (kind) {
-      log(req, kind)
-      Kinds.update(changes, id)
-      .then(updatedKind => {
-        res.json(updatedKind);
-      });
-    } else {
-      res.status(404).json({ message: 'Could not find kind with given id' });
-    }
-  })
-  .catch (err => {
-    res.status(500).json({ message: 'Failed to update kind' });
-  });
+  if(await Kinds.findByName(changes.kind_name, id)) {
+    res.status(400).json({message: "A record with this name already exists."})
+  } else {
+    Kinds.findById(id)
+    .then(kind => {
+      if (kind) {
+        log(req, kind)
+        Kinds.update(changes, id)
+        .then(updatedKind => {
+          res.json(updatedKind);
+        });
+      } else {
+        res.status(404).json({ message: 'Could not find kind with given id' });
+      }
+    })
+    .catch (err => {
+      res.status(500).json({ message: 'Failed to update kind' });
+    });
+  }
 });
 
 

@@ -4,6 +4,7 @@ module.exports = {
   find,
   listOfNames,
   findById,
+  findByName,
   getCreatedKinds,
   getUsesKinds,
   add,
@@ -39,6 +40,19 @@ function findById(id) {
   return db('pantheons')
     .where( 'pantheon_id', id )
     .first();
+}
+
+function findByName(name, excludingId = null) {
+  if(excludingId) {
+    return db('pantheons')
+    .where('pantheon_name', name)
+    .whereNot('pantheon_id', excludingId)
+    .first()
+  } else {
+    return db('pantheons')
+    .where('pantheon_name', name)
+    .first()
+  }
 }
 
 function getCreatedKinds(id) {

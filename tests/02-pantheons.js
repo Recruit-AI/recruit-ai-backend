@@ -10,6 +10,9 @@ const pantheon_changes = {pantheon_name: "Testing2"}
 let pantheon_object = {}
 let pantheon_id = 0
 const user_cred = {username: "pantheon_creator", password: "test", user_email: "pantheon_creator"}
+const bcrypt = require('bcryptjs')
+const user_hash = bcrypt.hashSync("pantheon_creator", 2)
+
 let user_token = ""
 let user_obj = {}
 
@@ -17,9 +20,9 @@ module.exports = describe("Pantheon Tests", () => {
     it("Finding user tests", async () => {
       await knexCleaner.clean(db)
       expect(1).toBe(1);
-      const user_response = await request(server).post('/api/users/register').send(user_cred);
-      user_obj = JSON.parse(user_response.text)
-      const verify_response = await request(server).get(`/api/users/verify/${user_obj.user_id}`);
+      const user_response = await request(server).post('/api/users/auth/register').send(user_cred);
+      user_obj = JSON.parse(user_response.text).user
+      const verify_response = await request(server).get(`/api/users/auth/verify/${user_obj.user_id}/${encodeURIComponent(user_hash)}`);
       const login_response = await request(server).post('/api/users/auth/login').send(user_cred);
       user_token = JSON.parse(login_response.text).token
       await Users.update({user_role:3}, user_obj.user_id)
@@ -46,7 +49,7 @@ module.exports = describe("Pantheon Tests", () => {
       expect(response.status).toBe(expectedStatusCode);
   })
   it("Create pantheon with same name, expecting failure", async () => {
-      const expectedStatusCode = 500;
+      const expectedStatusCode = 400;
       const response = await request(server).post('/api/pantheons').send(pantheon_info).set("Authorization", user_token);
       expect(response.status).toBe(expectedStatusCode);
   })

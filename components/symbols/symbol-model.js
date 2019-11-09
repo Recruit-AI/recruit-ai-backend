@@ -4,6 +4,7 @@ module.exports = {
   find,
   listOfNames,
   findById,
+  findByName,
   findKind,
   add,
   update,
@@ -32,6 +33,19 @@ function find(sort, sortdir, searchTerm) {
 function listOfNames() {
   return db('symbols')
   .select('symbol_name', 'symbol_id')
+}
+
+function findByName(name, excludingId = null) {
+  if(excludingId) {
+    return db('symbols')
+    .where('symbol_name', name)
+    .whereNot('symbol_id', excludingId)
+    .first()
+  } else {
+    return db('symbols')
+    .where('symbol_name', name)
+    .first()
+  }
 }
 
 function findById(id) {

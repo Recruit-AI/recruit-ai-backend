@@ -11,24 +11,25 @@ const pantheon_info = {pantheon_name: "Testing"}
 let kind_object = {}
 let kind_id = 0
 let pantheon_object = {}
-const user_cred = {username: "kind_creator", password: "test", user_email: "kind_creator"}
+const user_cred = {username: "pantheon_creator", password: "test", user_email: "pantheon_creator"}
+const bcrypt = require('bcryptjs')
+const user_hash = bcrypt.hashSync("pantheon_creator", 2)
+
 let user_token = ""
 let user_obj = {}
-
-
 
 module.exports = describe("Kind Tests", () => {
     it("Finding user tests", async () => {
       await knexCleaner.clean(db)
       expect(1).toBe(1);
-    const user_response = await request(server).post('/api/users/register').send(user_cred);
-    user_obj = JSON.parse(user_response.text)
-    const verify_response = await request(server).get(`/api/users/verify/${user_obj.user_id}`);
-    await Users.update({user_role:3}, user_obj.user_id)
-    user_obj = await Users.findById(user_obj.user_id)
-    const login_response = await request(server).post('/api/users/auth/login').send(user_cred);
-    user_token = JSON.parse(login_response.text).token
-    expect(1).toBe(1);
+      const user_response = await request(server).post('/api/users/auth/register').send(user_cred);
+      user_obj = JSON.parse(user_response.text).user
+      const verify_response = await request(server).get(`/api/users/auth/verify/${user_obj.user_id}/${encodeURIComponent(user_hash)}`);
+      const login_response = await request(server).post('/api/users/auth/login').send(user_cred);
+      user_token = JSON.parse(login_response.text).token
+      await Users.update({user_role:3}, user_obj.user_id)
+      user_obj = await Users.findById(user_obj.user_id)
+      expect(1).toBe(1);
   })
 
   it("Get all kinds", async () => {
@@ -58,7 +59,7 @@ module.exports = describe("Kind Tests", () => {
       expect(response.status).toBe(expectedStatusCode);
   })
   it("Create kind with same name, expecting failure", async () => {
-      const expectedStatusCode = 500;
+      const expectedStatusCode = 400;
       const response = await request(server).post('/api/kinds').send(kind_info).set("Authorization", user_token);
       expect(response.status).toBe(expectedStatusCode);
   })

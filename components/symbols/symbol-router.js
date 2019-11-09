@@ -86,40 +86,49 @@ router.get('/:id', async (req, res) => {
 
 });
 
-router.post('/', user_restricted,  (req, res) => {
+router.post('/', user_restricted,  async (req, res) => {
   const symbolData = req.body;
-  Symbols.add(symbolData)
-  .then(symbol => {
-    if(symbol){
-      log(req, {}, symbol)
-      res.status(201).json(symbol);
-    }
-    else { res.status(500).json({ message: 'Failed to create new symbol' }); }
-  })
-  .catch (err => {
-    res.status(500).json({ message: 'Failed to create new symbol' });
-  });
+
+  if(await Symbols.findByName(symbolData.symbol_name)) {
+    res.status(400).json({message: "A record with this name already exists."})
+  } else {
+    Symbols.add(symbolData)
+    .then(symbol => {
+      if(symbol){
+        log(req, {}, symbol)
+        res.status(201).json(symbol);
+      }
+      else { res.status(500).json({ message: 'Failed to create new symbol' }); }
+    })
+    .catch (err => {
+      res.status(500).json({ message: 'Failed to create new symbol' });
+    });
+  }
 });
 
-router.put('/:id', user_restricted, (req, res) => {
+router.put('/:id', user_restricted, async (req, res) => {
   const { id } = req.params;
   const changes = req.body;
 
-  Symbols.findById(id)
-  .then(symbol => {
-    if (symbol) {
-      log(req, symbol)
-      Symbols.update(changes, id)
-      .then(updatedSymbol => {
-        res.json(updatedSymbol);
-      });
-    } else {
-      res.status(404).json({ message: 'Could not find symbol with given id' });
-    }
-  })
-  .catch (err => {
-    res.status(500).json({ message: 'Failed to update symbol' });
-  });
+  if(await Symbols.findByName(changes.symbol_name, id)) {
+    res.status(400).json({message: "A record with this name already exists."})
+  } else {
+    Symbols.findById(id)
+    .then(symbol => {
+      if (symbol) {
+        log(req, symbol)
+        Symbols.update(changes, id)
+        .then(updatedSymbol => {
+          res.json(updatedSymbol);
+        });
+      } else {
+        res.status(404).json({ message: 'Could not find symbol with given id' });
+      }
+    })
+    .catch (err => {
+      res.status(500).json({ message: 'Failed to update symbol' });
+    });
+  }
 });
 
 router.delete('/:id', user_restricted, mod_restricted, async (req, res) => {

@@ -4,6 +4,7 @@ module.exports = {
   find,
   listOfNames,
   findById,
+  findByName,
   getSymbols,
   add,
   update,
@@ -36,6 +37,19 @@ function findById(id) {
     .join('pantheons', 'pantheon_id', '=', 'creator_pantheon_id')
     .where( 'kind_id', id )
     .first();
+}
+
+function findByName(name, excludingId = null) {
+  if(excludingId) {
+    return db('kinds')
+    .where('kind_name', name)
+    .whereNot('kind_id', excludingId)
+    .first()
+  } else {
+    return db('kinds')
+    .where('kind_name', name)
+    .first()
+  }
 }
 
 function getSymbols(id) {

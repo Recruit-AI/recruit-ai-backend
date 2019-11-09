@@ -1,6 +1,7 @@
 const server = require('../server.js');
 const request = require('supertest');
 var knexCleaner = require('knex-cleaner');
+const bcrypt = require('bcryptjs')
 // our connection to the database
 const db = require('../data/dbConfig.js');
 // the data access file we are testing
@@ -10,14 +11,17 @@ const Users = require('../components/users/user-model.js');
 
 const incomplete_creds = {username: "testuser", user_email: null, password: "test"}
 const good_user_creds = {username: "testuser", user_email: "testuser@user.com", password: "test"}
+const user_hash = bcrypt.hashSync("testuser", 2)
 let user_obj = {}
 let user_token = ""
 let user_id = 0
 const good_mod_creds = {username: "testmod", user_email: "testmod@user.com", password: "test"}
+const mod_hash = bcrypt.hashSync("testmod", 2)
 let mod_obj = {}
 let mod_token = ""
 let mod_id = 0
 const good_admin_creds = {username: "testadmin", user_email: "testadmin@user.com", password: "test"}
+const admin_hash = bcrypt.hashSync("testadmin", 2)
 let admin_obj = {}
 let admin_token = ""
 let admin_id = 0
@@ -33,19 +37,20 @@ describe("User Tests",  () => {
     describe("Register endpoint", () => {
         it("Register with incomplete credentials", async () => {
             const expectedStatusCode = 500;
-            const response = await request(server).post('/api/users/register').send(incomplete_creds);
+            const response = await request(server).post('/api/users/auth/register').send(incomplete_creds);
             expect(response.status).toBe(expectedStatusCode);
         })
         it("Register normal user", async () => {
             const expectedStatusCode = 201;
-            const response = await request(server).post('/api/users/register').send(good_user_creds);
-            user_obj = JSON.parse(response.text)
+            const response = await request(server).post('/api/users/auth/register').send(good_user_creds);
+            res = JSON.parse(response.text)
+            user_obj = res.user
             user_id = user_obj.user_id
             expect(response.status).toBe(expectedStatusCode);
         })
         it("Register with exact same credentials", async () => {
             const expectedStatusCode = 500;
-            const response = await request(server).post('/api/users/register').send(good_user_creds);
+            const response = await request(server).post('/api/users/auth/register').send(good_user_creds);
             expect(response.status).toBe(expectedStatusCode);
         })
       })
@@ -58,7 +63,7 @@ describe("User Tests",  () => {
         })
         it("Verify", async () => {
             const expectedStatusCode = 200;
-            const response = await request(server).get(`/api/users/verify/${user_obj.user_id}`);
+            const response = await request(server).get(`/api/users/auth/verify/${user_id}/${encodeURIComponent(user_hash)}`);
             expect(response.status).toBe(expectedStatusCode);
         })
         it("Try logging in again, should pass", async () => {
@@ -87,19 +92,21 @@ describe("User Tests",  () => {
 
       describe("Admin", () => {
         it("Register & verify mod, grab dashboard & confirm role", async () => {
-            let response = await request(server).post('/api/users/register').send(good_mod_creds);
-            mod_obj = JSON.parse(response.text)
+            let response = await request(server).post('/api/users/auth/register').send(good_mod_creds);
+            res = JSON.parse(response.text)
+            mod_obj = res.user
             mod_id = mod_obj.user_id
-            response = await request(server).get(`/api/users/verify/${mod_obj.user_id}`);
+            response = await request(server).get(`/api/users/auth/verify/${mod_id}/${encodeURIComponent(mod_hash)}`);
             await Users.update( {user_role:2} , mod_obj.user_id)
             mod_obj = await Users.findById(mod_obj.user_id)
             expect(mod_obj.user_role).toBe(2);
         })
         it("Register & verify admin, grab dashboard & confirm role", async () => {
-            let response = await request(server).post('/api/users/register').send(good_admin_creds);
-            admin_obj = JSON.parse(response.text)
+            let response = await request(server).post('/api/users/auth/register').send(good_admin_creds);
+            res = JSON.parse(response.text)
+            admin_obj = res.user
             admin_id = admin_obj.user_id
-            response = await request(server).get(`/api/users/verify/${admin_obj.user_id}`);
+            response = await request(server).get(`/api/users/auth/verify/${admin_id}/${encodeURIComponent(admin_hash)}`);
             await Users.update({user_role:3}, admin_obj.user_id)
             admin_obj = await Users.findById(admin_obj.user_id)
             expect(admin_obj.user_role).toBe(3);

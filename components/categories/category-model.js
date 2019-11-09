@@ -4,6 +4,7 @@ module.exports = {
   find,
   listOfNames,
   findById,
+  findByName,
   add,
   update,
   remove,
@@ -32,6 +33,19 @@ function findById(id) {
   return db('categories')
     .where( 'category_id', id )
     .first();
+}
+
+function findByName(name, excludingId = null) {
+  if(excludingId) {
+    return db('categories')
+    .where('category_name', name)
+    .whereNot('category_id', excludingId)
+    .first()
+  } else {
+    return db('categories')
+    .where('category_name', name)
+    .first()
+  }
 }
 
 function add(category) {

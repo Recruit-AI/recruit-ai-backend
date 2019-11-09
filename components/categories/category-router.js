@@ -80,38 +80,46 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.post('/', user_restricted, (req, res) => {
+router.post('/', user_restricted, async (req, res) => {
   const categoryData = req.body;
 
-  Categories.add(categoryData)
-  .then(category => {
-    log(req, {}, category)
-    res.status(201).json(category);
-  })
-  .catch (err => {
-    res.status(500).json({ message: 'Failed to create new category' });
-  });
+  if(await Categories.findByName(categoryData.category_name)) {
+    res.status(400).json({message: "A record with this name already exists."})
+  } else {
+    Categories.add(categoryData)
+    .then(category => {
+      log(req, {}, category)
+      res.status(201).json(category);
+    })
+    .catch (err => {
+      res.status(500).json({ message: 'Failed to create new category' });
+    });
+  }
 });
 
-router.put('/:id',user_restricted,  (req, res) => {
+router.put('/:id',user_restricted,  async (req, res) => {
   const { id } = req.params;
   const changes = req.body;
 
-  Categories.findById(id)
-  .then(category => {
-    if (category) {
-      log(req, category)
-      Categories.update(changes, id)
-      .then(updatedCategory => {
-        res.json(updatedCategory);
-      });
-    } else {
-      res.status(404).json({ message: 'Could not find category with given id' });
-    }
-  })
-  .catch (err => {
-    res.status(500).json({ message: 'Failed to update category' });
-  });
+  if(await Categories.findByName(changes.category_name, id)) {
+    res.status(400).json({message: "A record with this name already exists."})
+  } else {
+    Categories.findById(id)
+    .then(category => {
+      if (category) {
+        log(req, category)
+        Categories.update(changes, id)
+        .then(updatedCategory => {
+          res.json(updatedCategory);
+        });
+      } else {
+        res.status(404).json({ message: 'Could not find category with given id' });
+      }
+    })
+    .catch (err => {
+      res.status(500).json({ message: 'Failed to update category' });
+    });
+  }
 });
 
 router.delete('/:id', user_restricted, mod_restricted, async (req, res) => {

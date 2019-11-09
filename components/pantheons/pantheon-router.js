@@ -85,39 +85,47 @@ router.get('/:id', async (req, res) => {
 });
 
 
-router.post('/', user_restricted, (req, res) => {
+router.post('/', user_restricted, async (req, res) => {
   const pantheonData = req.body;
 
-  Pantheons.add(pantheonData)
-  .then(pantheon => {
-    log(req, {}, pantheon)
-    res.status(201).json(pantheon);
-  })
-  .catch (err => {
-    res.status(500).json({ message: 'Failed to create new pantheon', err: pantheonData });
-  });
+  if(await Pantheons.findByName(pantheonData.pantheon_name)) {
+    res.status(400).json({message: "A record with this name already exists."})
+  } else {
+    Pantheons.add(pantheonData)
+    .then(pantheon => {
+      log(req, {}, pantheon)
+      res.status(201).json(pantheon);
+    })
+    .catch (err => {
+      res.status(500).json({ message: 'Failed to create new pantheon', err: pantheonData });
+    });
+  }
 });
 
 
-router.put('/:id', user_restricted, (req, res) => {
+router.put('/:id', user_restricted, async (req, res) => {
   const { id } = req.params;
   const changes = req.body;
 
-  Pantheons.findById(id)
-  .then(pantheon => {
-    if (pantheon) {
-      log(req, pantheon)
-      Pantheons.update(changes, id)
-      .then(updatedPantheon => {
-        res.json(updatedPantheon);
-      });
-    } else {
-      res.status(404).json({ message: 'Could not find pantheon with given id' });
-    }
-  })
-  .catch (err => {
-    res.status(500).json({ message: 'Failed to update pantheon' });
-  });
+  if(await Pantheons.findByName(changes.pantheon_name, id)) {
+    res.status(400).json({message: "A record with this name already exists."})
+  } else {
+    Pantheons.findById(id)
+    .then(pantheon => {
+      if (pantheon) {
+        log(req, pantheon)
+        Pantheons.update(changes, id)
+        .then(updatedPantheon => {
+          res.json(updatedPantheon);
+        });
+      } else {
+        res.status(404).json({ message: 'Could not find pantheon with given id' });
+      }
+    })
+    .catch (err => {
+      res.status(500).json({ message: 'Failed to update pantheon' });
+    });
+  }
 });
 
 
