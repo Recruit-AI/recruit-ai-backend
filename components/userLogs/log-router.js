@@ -6,7 +6,7 @@ const {user_restricted, mod_restricted, admin_restricted} = require('../users/re
 
 const router = express.Router();
 
-router.get('/all', (req, res) => {
+router.get('/all', user_restricted, admin_restricted, (req, res) => {
   Logs.find()
   .then(logs => {
     res.json(logs);
@@ -16,7 +16,7 @@ router.get('/all', (req, res) => {
   });
 });
 
-router.get('/unconfirmed', (req, res) => {
+router.get('/unconfirmed', user_restricted, admin_restricted, (req, res) => {
   Logs.findUnconfirmed()
   .then(logs => {
     res.json(logs);
@@ -26,7 +26,7 @@ router.get('/unconfirmed', (req, res) => {
   });
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', user_restricted, admin_restricted, (req, res) => {
   const { id } = req.params;
 
   Logs.findById(id)
@@ -40,7 +40,7 @@ router.get('/:id', (req, res) => {
   .catch(err => {res.status(500).json({ message: 'Failed to get logs' });});
 });
 
-router.put('/:id/undo', user_restricted, async (req, res) => {
+router.put('/:id/undo', user_restricted, admin_restricted, async (req, res) => {
   const user_id = req.decodedToken.user.user_id
   const id = req.params.id
   const notes = req.body.notes
@@ -116,7 +116,7 @@ router.put('/:id/undo', user_restricted, async (req, res) => {
 
 })
 
-router.put('/:id/confirm', user_restricted, async (req, res) => {
+router.put('/:id/confirm', user_restricted, admin_restricted, async (req, res) => {
   const user_id = req.decodedToken.user.user_id
   const id = req.params.id
   const notes = req.body.notes

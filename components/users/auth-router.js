@@ -26,7 +26,7 @@ router.post('/register', (req, res) => {
   Users.add(userData)
   .then(user => {
     if(user.user_id) {
-      const link = `http://localhost:4001/api/users/auth/verify/${user.user_id}/${encodeURIComponent(user_hash)}` //This should be a front end link
+      const link = `https://grimwire.herokuapp.com/api/users/auth/verify/${user.user_id}/${encodeURIComponent(user_hash)}` //This should be a front end link
       const text = `Here is the link you should copy & paste into your browser: ${link}`
       const html = `<a href="${link}">Click Here</a> to verify your account.`
       sendEmail(user, "Please register your Grimwire account", text, html)
@@ -58,7 +58,7 @@ router.get("/forgottenPassword/:username", async (req, res) => {
   const user_hash = bcrypt.hashSync(user.username, 2)
 
   if(user) {
-    const link = `http://localhost:4001/api/users/auth/resetPassword/${username}/${encodeURIComponent(user_hash)}` //This should be a front end link
+    const link = `https://grimwire.herokuapp.com/api/users/auth/resetPassword/${username}/${encodeURIComponent(user_hash)}` //This should be a front end link
     const text = `Here is the link you should copy & paste into your browser: ${link}`
     const html = `<a href="${link}">Click Here</a> to reset your password.`
     sendEmail(user, "Your forgotten password link,", text, html)
