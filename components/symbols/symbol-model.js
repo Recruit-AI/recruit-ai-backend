@@ -18,7 +18,7 @@ function find(sort, sortdir, searchTerm) {
   .orderBy(sort, sortdir)
   .leftJoin('images', 'symbols.symbol_id', 'images.foreign_id')
   .leftJoin('kinds', 'symbols.symbol_kind_id', 'kinds.kind_id')
-  .where('symbol_name', 'like', `%${searchTerm}%`)
+  .where("symbol_name", 'iLIKE', `%${searchTerm}%`)
   .andWhere(function() {
     this.where(function() {
       this.where('foreign_class', "Symbol").andWhere('thumbnail', true)

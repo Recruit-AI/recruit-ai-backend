@@ -18,7 +18,7 @@ function find(sort, sortdir, searchTerm) {
   return db('pantheons')
   .orderBy(sort, sortdir)
   .leftJoin('images', 'pantheons.pantheon_id', 'images.foreign_id')
-  .where('pantheon_name', 'like', `%${searchTerm}%`)
+  .where('pantheon_name', 'iLIKE', `%${searchTerm}%`)
   .andWhere(function() {
     this.where(function() {
       this.where('foreign_class', "Pantheon").andWhere('thumbnail', true)

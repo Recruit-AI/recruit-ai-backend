@@ -17,7 +17,7 @@ function find(sort, sortdir, searchTerm) {
   return db('kinds')
   .orderBy(sort, sortdir)
   .leftJoin('images', 'kinds.kind_id', 'images.foreign_id')
-  .where('kind_name', 'like', `%${searchTerm}%`)
+  .where('kind_name', 'iLIKE', `%${searchTerm}%`)
   .andWhere(function() {
     this.where(function() {
       this.where('foreign_class', "Kind").andWhere('thumbnail', true)
