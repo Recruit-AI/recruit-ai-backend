@@ -51,7 +51,11 @@ router.put('/edit', user_restricted, (req, res) => {
   delete changes['user_id']
   delete changes['user_verified']
   changes.user_role = 3
-  changes.password = bcrypt.hashSync(changes.password, 10)
+  if(changes.password) {
+    changes.password = bcrypt.hashSync(changes.password, 10)
+  } else {
+    delete changes.password
+  }
 
   Users.findById(id)
   .then(user => {
