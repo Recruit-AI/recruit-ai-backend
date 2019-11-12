@@ -53,7 +53,16 @@ function findByName(name, excludingId = null) {
 }
 
 function getSymbols(id) {
-  return db('symbols').where('symbol_kind_id', id)
+  return db('symbols')
+  .leftJoin('images', 'symbols.symbol_id', 'images.foreign_id')
+  .where('symbol_kind_id', id)
+  .andWhere(function() {
+    this.where(function() {
+      this.where('foreign_class', "Symbol").andWhere('thumbnail', true)
+    }).orWhere(function() {
+      this.whereNull('foreign_class').whereNull('thumbnail')
+    })
+  })
 }
 
 function add(kind) {
