@@ -17,15 +17,15 @@ function findBySymbol(id) {
   .leftJoin('kinds', 'symbols.symbol_kind_id', 'kinds.kind_id')
   .select(
     'symbol_connection_id',
-    'connected_symbol_id',
     'connection_description',
     'connection_strength',
     'connection_relationship',
-    'kind_name',
-    'kind_id',
+    'symbol_id',
     'symbol_name',
     'symbol_kind_id',
-    'symbol_description'
+    'symbol_description',
+    'kind_name',
+    'kind_id',
   )
   .where('main_symbol_id', id)
 }
