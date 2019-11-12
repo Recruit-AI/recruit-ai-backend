@@ -14,7 +14,7 @@ module.exports = {
 function findByKind(id) {
   return db('kinds_to_pantheons')
   .leftJoin('pantheons', 'kinds_to_pantheons.kp_pantheon_id', 'pantheons.pantheon_id')
-  .select('kinds_to_pantheons_id', 'pantheon_id', 'kp_description', 'pantheon_name', 'pantheon_description')
+  .select('kinds_to_pantheons_id', 'pantheon_id', 'kp_pantheon_id', 'kp_description', 'pantheon_name', 'pantheon_description')
   .where('kp_kind_id', id)
 }
 
