@@ -14,12 +14,15 @@ module.exports = {
 function findBySymbol(id) {
   return db('symbol_connections')
   .leftJoin('symbols', 'symbol_connections.connected_symbol_id', 'symbols.symbol_id')
+  .leftJoin('kinds', 'symbols.symbol_kind_id', 'kinds.kind_id')
   .select(
     'symbol_connection_id',
     'connected_symbol_id',
     'connection_description',
     'connection_strength',
     'connection_relationship',
+    'kind_name',
+    'kind_id',
     'symbol_name',
     'symbol_kind_id',
     'symbol_description'
