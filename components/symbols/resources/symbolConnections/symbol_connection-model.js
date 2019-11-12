@@ -17,7 +17,7 @@ function findBySymbol(id) {
   .leftJoin('kinds', 'symbols.symbol_kind_id', 'kinds.kind_id')
   .select(
     'symbol_connection_id',
-    'connection_symbol_id',
+    'connected_symbol_id',
     'connection_description',
     'connection_strength',
     'connection_relationship',
