@@ -8,6 +8,8 @@ const nodeMailer = require('nodemailer')
 const secrets = require('../../config/secrets.js');
 
 const verifyEmailTemplate = require('./verify-email-template')
+const forgotPasswordTemplate = require('./forgotten-password-template')
+
 
 const {user_restricted, mod_restricted, admin_restricted} = require('./restricted-middleware.js')
 
@@ -61,8 +63,8 @@ router.get("/forgottenPassword/:username", async (req, res) => {
 
   if(user) {
     const link = `https://grimwire.netlify.com/users/resetPassword/${username}/${encodeURIComponent(user_hash)}` //This should be a front end link
-    const text = `Here is the link you should copy & paste into your browser: ${link}`
-    const html = `<a href="${link}">Click Here</a> to reset your password.`
+    const text = `You can copy and past this link into your browser to reset your password: ${link}`
+    const html = forgotPasswordTemplate(link)
     sendEmail(user, "Your forgotten password link,", text, html)
   }
 
