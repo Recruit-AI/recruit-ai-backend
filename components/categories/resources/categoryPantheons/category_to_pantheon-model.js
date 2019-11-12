@@ -14,7 +14,7 @@ module.exports = {
 function findByCategory(id) {
   return db('category_to_pantheons')
   .leftJoin('pantheons', 'category_to_pantheons.cpa_pantheon_id', 'pantheons.pantheon_id')
-  .select('category_pantheon_id', 'pantheon_id', 'cpa_description', 'pantheon_name', 'pantheon_description')
+  .select('category_pantheon_id', 'cpa_pantheon_id', 'pantheon_id', 'cpa_description', 'pantheon_name', 'pantheon_description')
   .where('cpa_category_id', id)
 }
 
