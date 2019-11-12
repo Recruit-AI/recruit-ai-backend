@@ -7,6 +7,8 @@ const jwt = require('jsonwebtoken')
 const nodeMailer = require('nodemailer')
 const secrets = require('../../config/secrets.js');
 
+const verifyEmailTemplate = require('./verify-email-template')
+
 const {user_restricted, mod_restricted, admin_restricted} = require('./restricted-middleware.js')
 
 const router = express.Router();
@@ -27,9 +29,9 @@ router.post('/register', (req, res) => {
   .then(user => {
     if(user.user_id) {
       const link = `https://grimwire.netlify.com/users/verify/${user.user_id}/${encodeURIComponent(user_hash)}` //This should be a front end link
-      const text = `Here is the link you should copy & paste into your browser: ${link}`
-      const html = `<a href="${link}">Click Here</a> to verify your account.`
-      sendEmail(user, "Please register your Grimwire account", text, html)
+      const text = `Thank you for registering for Grimwire. You can copy & paste this link to complete the verification process: ${link}`
+      const html = verifyEmailTemplate(link)
+      sendEmail(user, "Thank You For Registering With GrimWire", text, html)
       res.status(201).json({message: "User registered. Please check your email for confirmation.", user, user_hash})
     }
     else {res.status(500).json(user)};

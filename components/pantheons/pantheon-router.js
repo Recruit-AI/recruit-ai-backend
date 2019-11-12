@@ -130,7 +130,7 @@ router.put('/:id', user_restricted, async (req, res) => {
 
 
 //First, remove all histories, then delete the pantheon record itself.
-router.delete('/:id', user_restricted,  async (req, res) => {
+router.delete('/:id', user_restricted, async (req, res) => {
   const { id } = req.params;
 
   log(req, await Pantheons.findById(id) )
