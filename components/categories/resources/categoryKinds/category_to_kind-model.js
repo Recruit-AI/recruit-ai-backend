@@ -13,7 +13,7 @@ module.exports = {
 function findByCategory(id) {
   return db('category_to_kinds')
   .leftJoin('kinds', 'category_to_kinds.ck_kind_id', 'kinds.kind_id')
-  .select('category_kind_id', 'kind_id', 'ck_description', 'kind_name', 'kind_description')
+  .select('category_kind_id', 'ck_kind_id', 'kind_id', 'ck_description', 'kind_name', 'kind_description')
   .where('ck_category_id', id)
 }
 
