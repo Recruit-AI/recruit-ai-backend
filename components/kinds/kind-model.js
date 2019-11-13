@@ -22,7 +22,7 @@ function find(sort, sortdir, searchTerm) {
     this.where(function() {
       this.where('foreign_class', "Kind").andWhere('thumbnail', true)
     }).orWhere(function() {
-      this.whereNull('foreign_class').whereNull('thumbnail')
+      this.whereNull('foreign_class').andWhere(function() { this.whereNull('thumbnail') })
     })
   })
 }

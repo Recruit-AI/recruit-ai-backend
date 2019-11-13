@@ -32,12 +32,7 @@ router.get('/', (req, res) => {
     const pageOfItems = items.slice(pager.startIndex, pager.endIndex + 1);
 
     // return pager object and current page of items
-    return res.json({ pager, pageOfItems: pageOfItems.map(
-      kind => ({
-        ...kind,
-        specific_order: kind.specific_order === 1 ? true : false
-      })
-    )});
+    return res.json({ pager, pageOfItems: pageOfItems});
   })
   .catch(err => {
     res.status(500).json({ message: 'Failed to get kinds' });
