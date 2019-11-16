@@ -57,7 +57,7 @@ function findByName(name, excludingId = null) {
 async function getSymbols(id, kindInfoKinds) {
   const symbols = await db('symbols')
   .leftJoin('images', 'symbols.symbol_id', 'images.foreign_id')
-  .select('symbol_name', 'symbol_id', 'symbol_description', 'symbol_kind_id', 'health_warning', 'image_url', 'extra_info')
+  .select('symbol_name', 'symbol_id', 'symbol_description', 'symbol_kind_id', 'health_warning', 'image_url', 'extra_info', 'order_number')
   .where('symbol_kind_id', id)
   .andWhere(function() {
     this.where(function() {
