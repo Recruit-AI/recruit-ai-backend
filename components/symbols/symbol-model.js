@@ -6,6 +6,7 @@ module.exports = {
   findById,
   findByName,
   findKind,
+  findKindConnections,
   add,
   update,
   remove
@@ -55,7 +56,17 @@ function findById(id) {
 }
 
 function findKind(kind_id) {
-  return db('kinds').where('kind_id', kind_id).first()
+  return db('kinds')
+  .select('kind_id', 'kind_name', 'kind_description', 'specific_order', 'default_extra_info')
+  .where('kind_id', kind_id).first()
+}
+
+function findKindConnections(id) {
+  return db('kind_symbol_connections')
+  .leftJoin('kinds', 'kinds.kind_id', 'kind_symbol_connections.ksc_kind_id')
+  .select('kind_symbol_connection_id', 'ksc_kind_id', 
+    'kind_id',  'kind_name')
+  .where('ksc_symbol_id', id)
 }
 
 function add(symbol) {

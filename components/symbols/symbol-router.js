@@ -79,7 +79,8 @@ router.get('/:id', async (req, res) => {
     const pantheons = await SymbolToPantheons.findBySymbol(id)
     const connections = await SymbolConnections.findBySymbol(id)
     const kind = await Symbols.findKind(symbol.symbol_kind_id)
-    res.json({...symbol, thumbnail, images, sources, pantheons, connections, kind })
+    const kindSymbolConnection = await Symbols.findKindConnections(id)
+    res.json({...symbol, thumbnail, images, sources, pantheons, connections, kind, kindSymbolConnection })
   } else {
     res.status(404).json({ message: 'Could not find symbol with given id.' })
   }
