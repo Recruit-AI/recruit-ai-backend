@@ -4,11 +4,17 @@ const router = express.Router();
 
 const Kinds = require('./kind-model.js');
 const KindPantheons = require('./resources/kindPantheons/kind_to_pantheon-model.js');
+const KindSymbolConnections = require('./resources/kindSymbolConnections/kind_symbol_connection-model.js');
+const KindInfoKinds = require('./resources/kindInfoKinds/kind_info_kind-model.js');
 const Images = require('../images/image-model.js');
 const Sources = require('../sources/source-model.js');
 
 const KindPantheonRouter = require('./resources/kindPantheons/kind_to_pantheon-router.js');
+const KindSymbolConnectionRouter = require('./resources/kindSymbolConnections/kind_symbol_connection-router.js');
+const KindInfoKindRouter = require('./resources/kindInfoKinds/kind_info_kind-router.js');
 router.use('/pantheons', KindPantheonRouter);
+router.use('/symbolConnections', KindSymbolConnectionRouter);
+router.use('/infoKinds', KindInfoKindRouter);
 
 const {user_restricted, mod_restricted, admin_restricted} = require('../users/restricted-middleware.js')
 const {log} = require('../userLogs/log-middleware.js')
@@ -57,9 +63,13 @@ router.get('/:id', async (req, res) => {
     const thumbnail = await Images.getThumbnail('Kind', id)
     const images = await Images.getImages('Kind', id)
     const sources = await Sources.getSources('Kind', id)
-    const symbols = await Kinds.getSymbols(id)
+    const kindInfoKinds = await KindInfoKinds.findByKind(id)
+    //These symbols should also return the connections that match with KindInfoKinds
+    const symbols = await Kinds.getSymbols(id, kindInfoKinds)
+    const kindSymbolConnections = await KindSymbolConnections.findByKind(id)
     const pantheons =  await KindPantheons.findByKind(id)
-    res.json({...kind, thumbnail, images, sources, pantheons, symbols})
+    const categories = await Kinds.getCategories(id)
+    res.json({...kind, thumbnail, images, sources, pantheons, symbols, kindSymbolConnections, categories})
   } else {
     res.status(404).json({ message: 'Could not find kind with given id.' })
   }

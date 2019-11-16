@@ -58,6 +58,12 @@ router.post('/', user_restricted, (req, res) => {
         case 4:
           data.connection_relationship = 3
           break;
+        case 6:
+          data.connection_relationship = 6
+          break;
+        case 7:
+          data.connection_relationship = 7
+          break;
       }
       data.connected_symbol_id = main_id
       data.main_symbol_id = connect_id

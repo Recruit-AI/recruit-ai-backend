@@ -10,8 +10,8 @@ const {log} = require('../userLogs/log-middleware.js')
 
 const router = express.Router();
 
-const AuthRouter = require('./auth-router.js');
-const AdminRouter = require('./admin-router.js');
+const AuthRouter = require('./auth/auth-router.js');
+const AdminRouter = require('./auth/admin-router.js');
 router.use('/auth', AuthRouter);
 router.use('/admin', AdminRouter);
 

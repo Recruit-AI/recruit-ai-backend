@@ -1,17 +1,17 @@
 const express = require('express');
 
-const Users = require('./user-model.js');
+const Users = require('../user-model.js');
+const IpAuth = require('./ip-auth-model.js')
 
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const nodeMailer = require('nodemailer')
-const secrets = require('../../config/secrets.js');
 
-const verifyEmailTemplate = require('./verify-email-template')
-const forgotPasswordTemplate = require('./forgotten-password-template')
+const verifyEmailTemplate = require('../emailTemplates/verify-email-template')
+const forgotPasswordTemplate = require('../emailTemplates/forgotten-password-template')
 
 
-const {user_restricted, mod_restricted, admin_restricted} = require('./restricted-middleware.js')
+const {user_restricted, mod_restricted, admin_restricted} = require('../restricted-middleware.js')
 
 const router = express.Router();
 
@@ -89,8 +89,10 @@ router.put("/resetPassword/:username/:user_hash", async (req, res) => {
 
 })
 
-router.post('/login', (req, res) => {
+router.post('/login', check_ip_ban, (req, res) => {
   let {username, password} = req.body
+
+
 
   Users.findByUsername(username)
   .then(user => {
@@ -114,7 +116,22 @@ router.delete('/logout', user_restricted, (req, res) => {
 });
 
 
+async function check_ip_ban(req, res, next) {
+  const check = await IpAuth.processIp( getUserIP(req) )
+  if(check) { next() } else { res.status(400).json({message: "Invalid Credentials."})}
+}
 
+const getUserIP = (req) => {
+  var ipAddr = req.headers["x-forwarded-for"];
+  if (ipAddr){
+    var list = ipAddr.split(",");
+    ipAddr = list[list.length-1];
+  } else {
+    ipAddr = req.connection.remoteAddress;
+  }
+  //During development, this will return "::1", for localhost. Set to a valid ip instead.
+  return ipAddr === "::1" ? "161.185.160.93" : ipAddr;
+}
 
 
 function generateToken(user) {

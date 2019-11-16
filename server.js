@@ -15,6 +15,8 @@ const PantheonRouter = require('./components/pantheons/pantheon-router.js');
 const KindRouter = require('./components/kinds/kind-router.js');
 const CategoryRouter = require('./components/categories/category-router.js');
 const SymbolRouter = require('./components/symbols/symbol-router.js');
+//Extra components
+const ResourceRouter = require('./components/resources/resource-router.js')
 //User Information
 const UserRouter = require('./components/users/user-router.js');
 
@@ -30,6 +32,9 @@ server.use('/api/pantheons', PantheonRouter);
 server.use('/api/kinds', KindRouter);
 server.use('/api/categories', CategoryRouter);
 server.use('/api/symbols', SymbolRouter);
+//Extra Components
+server.use('/api/resources', ResourceRouter);
+
 //User & auth information
 server.use('/api/users', UserRouter);
 

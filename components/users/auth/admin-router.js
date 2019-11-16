@@ -1,9 +1,9 @@
 const express = require('express');
 
-const Users = require('./user-model.js');
+const Users = require('../user-model.js');
 
-const {user_restricted, mod_restricted, admin_restricted} = require('./restricted-middleware.js')
-const {log} = require('../userLogs/log-middleware.js')
+const {user_restricted, mod_restricted, admin_restricted} = require('../restricted-middleware.js')
+const {log} = require('../../userLogs/log-middleware.js')
 
 const router = express.Router();
 
