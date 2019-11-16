@@ -2,6 +2,7 @@ const db = require('../../../../data/dbConfig.js');
 
 module.exports = {
   findByKind,
+  findSymbolsByKind,
   findById,
   add,
   update,
@@ -11,11 +12,16 @@ module.exports = {
 
 
 
-async function findByKind(id) {
-  const kinds = await db('kind_info_kinds')
+function findByKind(id) {
+  return db('kind_info_kinds')
   .leftJoin('kinds', 'kind_info_kinds.kik_connected_info_id', 'kinds.kind_id')
   .select('kind_info_kind_id', 'kind_id', 'kik_connected_info_id', 'kind_name', 'kind_description')
   .where('kik_kind_id', id)
+}
+
+
+async function findSymbolsByKind(id) {
+  const kinds = await findByKind(id)
 
   let results = async() => Promise.all(kinds.map(item => {
     const symbols = db('symbols')

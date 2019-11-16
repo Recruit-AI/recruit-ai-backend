@@ -65,11 +65,12 @@ router.get('/:id', async (req, res) => {
     const sources = await Sources.getSources('Kind', id)
     const kindInfoKinds = await KindInfoKinds.findByKind(id)
     //These symbols should also return the connections that match with KindInfoKinds
-    const symbols = await Kinds.getSymbols(id, kindInfoKinds)
+    const kikSymbols = await KindInfoKinds.findSymbolsByKind(id)
+    const symbols = await Kinds.getSymbols(id, kikSymbols)
     const kindSymbolConnections = await KindSymbolConnections.findByKind(id)
     const pantheons =  await KindPantheons.findByKind(id)
     const categories = await Kinds.getCategories(id)
-    res.json({...kind, thumbnail, images, sources, pantheons, symbols, kindSymbolConnections, categories})
+    res.json({...kind, thumbnail, images, sources, pantheons, symbols, kindSymbolConnections, categories, kindInfoKinds})
   } else {
     res.status(404).json({ message: 'Could not find kind with given id.' })
   }
