@@ -63,7 +63,7 @@ router.post('/', user_restricted, (req, res) => {
 router.put('/:id', user_restricted, (req, res) => {
   const { id } = req.params;
 
-  Resources.update({logged: true}, id)
+  Resources.update(req.body, id)
   .then(updatedResource => {
     res.json(updatedResource);
   })
