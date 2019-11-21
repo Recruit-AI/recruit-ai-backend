@@ -34,6 +34,19 @@ router.get('/', (req, res) => {
   });
 });
 
+router.get('/:id', (req, res) => {
+  const id = req.params.id;
+
+  Resources.findById(id)
+  .then(resource => {
+    res.status(201).json(resource);
+  })
+  .catch (err => {
+    res.status(500).json({ message: 'Failed to find resource' });
+  });
+
+});
+
 router.post('/', user_restricted, (req, res) => {
   const resourceData = req.body;
 
