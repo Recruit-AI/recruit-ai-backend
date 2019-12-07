@@ -72,6 +72,17 @@ router.put('/edit', user_restricted, (req, res) => {
   });
 });
 
+router.delete('/:id', user_restricted, admin_restricted, (req, res) => {
+  const id = req.params.id
+
+  Users.remove(id)
+  .then(res => {res.json({message: "User deleted."})})
+  .catch (err => {
+    res.status(500).json({ message: 'Failed to delete user' });
+  });
+
+})
+
 
 
 module.exports = router;
