@@ -16,6 +16,7 @@ function findUnconfirmed() {
   .select('logs.*', 'submitter.username AS submitter_username')
   .leftJoin('users as submitter', 'logs.log_submitting_user_id', 'submitter.user_id')
   .whereNull('log_confirmed')
+  .limit(50)
 }
 
 function find() {
@@ -23,6 +24,7 @@ function find() {
   .select('logs.*', 'submitter.username AS submitter_username', 'confirmer.username AS confirmer_username')
   .leftJoin('users as submitter', 'logs.log_submitting_user_id', 'submitter.user_id')
   .leftJoin('users as confirmer', 'logs.log_confirming_user_id', 'confirmer.user_id')
+  .limit(50)
 }
 
 function findById(id) {

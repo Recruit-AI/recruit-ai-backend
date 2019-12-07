@@ -9,7 +9,7 @@ const router = express.Router();
 router.get('/all', user_restricted, admin_restricted, (req, res) => {
   Logs.find()
   .then(logs => {
-    res.json(logs.slice(0, 50));
+    res.json(logs);
   })
   .catch(err => {
     res.status(500).json({ message: 'Failed to get logs' });
