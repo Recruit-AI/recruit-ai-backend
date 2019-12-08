@@ -10,7 +10,7 @@ module.exports = {
 
 function findBySymbol(id) {
   return db('symbol_resources')
-  .leftJoin('resources', 'symbol_resources.sr_symbol_id', 'resources.resource_id')
+  .leftJoin('resources', 'symbol_resources.sr_resource_id', 'resources.resource_id')
   .select(
     'symbol_resource_id',
     'sr_resource_id',
