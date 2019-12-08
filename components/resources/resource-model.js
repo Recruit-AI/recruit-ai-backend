@@ -4,6 +4,7 @@ const knex = require('knex')
 module.exports = {
   find,
   findById,
+  listOfNames,
   add,
   update,
   remove
@@ -30,6 +31,11 @@ function findById(id) {
   return db('resources')
     .where( 'resource_id', id )
     .first();
+}
+
+function listOfNames() {
+  return db('resources')
+  .select('resource_name', 'resource_id')
 }
 
 function add(resource) {
