@@ -16,7 +16,15 @@ module.exports = {
 //Returns an array of simple pantheon objects based on the provided id. Only returns short fields, no longtext fields.
 function findHistories(id) {
   return db('pantheons_history')
-  .select('pantheon_history_id', 'influenced_id', 'influencer_id', 'pantheon_id', 'pantheon_name', 'pantheon_description', 'start_year', 'end_year')
+  .select('pantheon_history_id', 
+  'influenced_id', 
+  'influencer_id', 
+  'history_type',
+  'pantheon_id', 
+  'pantheon_name', 
+  'pantheon_description', 
+  'start_year', 
+  'end_year')
   .join('pantheons', 'pantheons_history.influencer_id', 'pantheons.pantheon_id')
   .where('influenced_id', id)
 }

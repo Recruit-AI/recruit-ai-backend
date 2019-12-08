@@ -3,6 +3,7 @@ const db = require('../../data/dbConfig.js');
 module.exports = {
   find,
   listOfNames,
+  findRelatedNames,
   findById,
   findByName,
   findKind,
@@ -31,9 +32,24 @@ function find(sort, sortdir, searchTerm) {
   .catch(err => console.log(err))
 }
 
+
 function listOfNames() {
   return db('symbols')
   .select('symbol_name', 'symbol_id')
+}
+
+function findRelatedNames(name, id) {
+  //We are just passing in the name of the symbol. 
+  //Since the convention is "${name} (${kind})", we'll split by ' (' and artificially add a space, 
+  //do a case-sensitive search for that.
+  //This may narrow results, but will avoid edge cases like a title called "Az" returning a bunch extra things.
+  const searchTerm = name.split(' (')[0] + " "
+  return db('symbols')
+  .leftJoin('kinds', 'symbols.symbol_kind_id', 'kinds.kind_id')
+  .where("symbol_name", 'LIKE', `%${searchTerm}%`)
+  .andWhereNot('symbol_id', id)
+  .select('symbol_id', 'symbol_name', 'kind_id', 'kind_name')
+
 }
 
 function findByName(name, excludingId = null) {

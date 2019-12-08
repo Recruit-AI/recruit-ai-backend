@@ -6,14 +6,17 @@ const router = express.Router();
 const Symbols = require('./symbol-model.js');
 const SymbolConnections = require('./resources/symbolConnections/symbol_connection-model.js');
 const SymbolToPantheons = require('./resources/symbolPantheons/symbol_to_pantheon-model.js');
+const SymbolResources = require('./resources/symbolResources/symbol_resource-model.js');
 const Images = require('../images/image-model.js');
 const Sources = require('../sources/source-model.js');
 
 
 const SymbolConnectionRouter = require('./resources/symbolConnections/symbol_connection-router.js');
 const SymbolToPantheonRouter = require('./resources/symbolPantheons/symbol_to_pantheon-router.js');
+const SymbolResourceRouter = require('./resources/symbolResources/symbol_resource-router.js');
 router.use('/connections', SymbolConnectionRouter);
 router.use('/pantheons', SymbolToPantheonRouter);
+router.use('/resources', SymbolResourceRouter);
 
 const {user_restricted, mod_restricted, admin_restricted} = require('../users/restricted-middleware.js')
 const {log} = require('../userLogs/log-middleware.js')
@@ -80,7 +83,9 @@ router.get('/:id', async (req, res) => {
     const connections = await SymbolConnections.findBySymbol(id)
     const kind = await Symbols.findKind(symbol.symbol_kind_id)
     const kindSymbolConnection = await Symbols.findKindConnections(id)
-    res.json({...symbol, thumbnail, images, sources, pantheons, connections, kind, kindSymbolConnection })
+    const resources = await SymbolResources.findBySymbol(id)
+    const relatedNameSymbols = await Symbols.findRelatedNames( symbol.symbol_name, id )
+    res.json({...symbol, thumbnail, images, relatedNameSymbols, sources, resources, pantheons, connections, kind, kindSymbolConnection })
   } else {
     res.status(404).json({ message: 'Could not find symbol with given id.' })
   }

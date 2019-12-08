@@ -4,6 +4,7 @@ module.exports = {
   find,
   findUnconfirmed,
   findById,
+  confirmAll,
   add,
   update,
   remove
@@ -25,6 +26,12 @@ function find() {
   .leftJoin('users as submitter', 'logs.log_submitting_user_id', 'submitter.user_id')
   .leftJoin('users as confirmer', 'logs.log_confirming_user_id', 'confirmer.user_id')
   .limit(50)
+}
+
+function confirmAll() {
+  return db('logs')
+  .whereNull('log_confirmed')
+  .update('log_confirmed', true)
 }
 
 function findById(id) {

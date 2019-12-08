@@ -123,4 +123,9 @@ router.put('/:id/confirm', user_restricted, admin_restricted, async (req, res) =
   res.json(await Logs.update( {notes, log_confirmed: true, log_confirming_user_id: user_id} , id))
 })
 
+router.put('/confirm_all', user_restricted, admin_restricted, async (req, res) => {
+  await Logs.confirmAll()
+  res.json({message: "Success"})
+})
+
 module.exports = router;
