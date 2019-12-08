@@ -35,7 +35,7 @@ function findById(id) {
 
 function listOfNames() {
   return db('resources')
-  .select('resource_name', 'resource_id')
+  .select('resource_title', 'resource_id')
 }
 
 function add(resource) {
