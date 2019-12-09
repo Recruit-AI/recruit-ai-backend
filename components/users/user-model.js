@@ -2,6 +2,7 @@ const db = require('../../data/dbConfig.js');
 
 module.exports = {
   find,
+  findUser,
   findById,
   findByEmail,
   findByUsername,
@@ -23,6 +24,13 @@ function findById(id) {
   return db('users')
     .where( 'user_id', id )
     .first();
+}
+
+function findUser(key) {
+  return db('users')
+  .where('user_email', key)
+  .orWhere('username', key)
+  .first();
 }
 
 function findByUsername(username) {

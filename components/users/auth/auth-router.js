@@ -130,7 +130,7 @@ router.post('/login', check_ip_ban, (req, res) => {
 
 
 
-  Users.findByUsername(username)
+  Users.findUser(username)
     .then(user => {
       if (user && bcrypt.compareSync(password, user.password) && user.user_verified) {
         const token = generateToken(user)
