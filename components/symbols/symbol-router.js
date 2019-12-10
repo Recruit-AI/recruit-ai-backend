@@ -122,9 +122,9 @@ router.put('/:id', user_restricted, async (req, res) => {
     Symbols.findById(id)
     .then(symbol => {
       if (symbol) {
-        log(req, symbol)
         Symbols.update(changes, id)
         .then(updatedSymbol => {
+          log(req, symbol)
           res.json(updatedSymbol);
         });
       } else {
@@ -139,9 +139,10 @@ router.put('/:id', user_restricted, async (req, res) => {
 
 router.delete('/:id', user_restricted, mod_restricted, async (req, res) => {
   const { id } = req.params;
-  log(req, await Symbols.findById(id) )
+  const item = await Symbols.findById(id)
       Symbols.remove(id)
       .then(deleted => {
+        log(req, item )
         res.send("Success.")
       })
       .catch(err => { res.status(500).json({ message: 'Failed to delete symbol' }) });

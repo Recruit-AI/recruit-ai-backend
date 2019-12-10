@@ -105,9 +105,9 @@ router.put('/:id', user_restricted, async (req, res) => {
     Kinds.findById(id)
     .then(kind => {
       if (kind) {
-        log(req, kind)
         Kinds.update(changes, id)
         .then(updatedKind => {
+          log(req, kind)
           res.json(updatedKind);
         });
       } else {
@@ -123,9 +123,10 @@ router.put('/:id', user_restricted, async (req, res) => {
 
 router.delete('/:id', user_restricted, mod_restricted, async (req, res) => {
   const { id } = req.params;
-  log(req, await Kinds.findById(id) )
+  const item = await Kinds.findById(id) 
       Kinds.remove(id)
       .then(deleted => {
+        log(req,item )
         res.send("Success.")
       })
       .catch(err => { res.status(500).json({ message: 'Failed to delete kind' }) });

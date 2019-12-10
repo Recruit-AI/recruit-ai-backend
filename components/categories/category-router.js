@@ -107,9 +107,9 @@ router.put('/:id',user_restricted,  async (req, res) => {
     Categories.findById(id)
     .then(category => {
       if (category) {
-        log(req, category)
         Categories.update(changes, id)
         .then(updatedCategory => {
+          log(req, category)
           res.json(updatedCategory);
         });
       } else {
@@ -124,10 +124,10 @@ router.put('/:id',user_restricted,  async (req, res) => {
 
 router.delete('/:id', user_restricted, mod_restricted, async (req, res) => {
   const { id } = req.params;
-
-  log(req, await Categories.findById(id) )
+const item = await Categories.findById(id) 
       Categories.remove(id)
       .then(deleted => {
+        log(req,  item )
         res.send("Success.")
       })
       .catch(err => { res.status(500).json({ message: 'Failed to delete category' }) });

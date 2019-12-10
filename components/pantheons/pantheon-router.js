@@ -113,9 +113,9 @@ router.put('/:id', user_restricted, async (req, res) => {
     Pantheons.findById(id)
     .then(pantheon => {
       if (pantheon) {
-        log(req, pantheon)
         Pantheons.update(changes, id)
         .then(updatedPantheon => {
+          log(req, pantheon)
           res.json(updatedPantheon);
         });
       } else {
@@ -133,12 +133,13 @@ router.put('/:id', user_restricted, async (req, res) => {
 router.delete('/:id', user_restricted, async (req, res) => {
   const { id } = req.params;
 
-  log(req, await Pantheons.findById(id) )
+  const item = await Pantheons.findById(id)
   PantheonHistories.removeHistoriesByPantheons(id)
   .then(deleted => {
       //Be sure to log pantheon history ids as they are getting
       Pantheons.remove(id)
       .then(deleted => {
+        log(req, item )
         res.send("Success.")
       })
       .catch(err => { res.status(500).json({ message: 'Failed to delete pantheon' }) });
