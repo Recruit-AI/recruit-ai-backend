@@ -8,7 +8,7 @@ module.exports = {
       host : '127.0.0.1',
       user : 'postgres',
       password : '',
-      database : 'grimwire',
+      database : 'simple-blog',
       charset: 'utf8'
     },
     migrations: { directory: './data/migrations' },
@@ -20,7 +20,7 @@ module.exports = {
         host : '127.0.0.1',
         user : 'postgres',
         password : '',
-        database : 'grimwire-test',
+        database : 'simple-blog-test',
         charset: 'utf8'
       },
       migrations: { directory: './data/migrations' },
