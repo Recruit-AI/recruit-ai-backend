@@ -2,42 +2,54 @@
 const jwt = require('jsonwebtoken')
 const Users = require('./user-model.js')
 
-const user_restricted =  (req, res, next) => {
+const getToken = async (req, res) => {
   const token = req.headers.authorization
-  if(token){
-    jwt.verify(token, process.env.JWT_SECRET, async (err, decodedToken) => {
-      if(err){
-        res.status(401).json({message: "Error.", error: err});
-        return
-      } else {
+  let ret = false;
+  if (token) {
+    await jwt.verify(token, process.env.JWT_SECRET, async (err, decodedToken) => {
+      if (err) {
+        ret = false
+      }
+      else {
         decodedToken.user = await Users.findById(decodedToken.user.user_id)
         req.decodedToken = decodedToken
-        next();
-        return
+        ret = true
       }
     })
-  }else{
-    res.status(400).json({message: "You need to be logged in."})
-    return
   }
+  return ret
 }
 
-function mod_restricted(req, res, next) {
-  user_restricted(req, res)
-  if(req.decodedToken) {
-    req.decodedToken.user.user_role >= 2 ? next() : res.status(500).send("Permission missing.")
+const check_permission = (value, req, res) => {
+  if (req.decodedToken) {
+    return req.decodedToken.user.user_role >= value
   } else {
-    res.status(500).send("You need to be logged in.")
+    return false
   }
 }
 
-function admin_restricted(req, res, next) {
-  user_restricted(req, res)
-  if(req.decodedToken) {
-    req.decodedToken.user.user_role >= 3 ? next() : res.status(500).send("Permission missing.")
+const restrictRoute = async (value, req, res, next) => {
+  if (await getToken(req, res)) {
+    if (check_permission(value, req, res)) {
+      next();
+    } else {
+      res.status(500).json({ message: "Permission missing." })
+    }
   } else {
-    res.status(500).send("You need to be logged in.")
+    res.status(500).json({ message: "You need to be logged in." })
   }
 }
 
-module.exports = {user_restricted, mod_restricted, admin_restricted}
+const user_restricted = (req, res, next) => {
+  restrictRoute(1, req, res, next)
+}
+
+const mod_restricted = (req, res, next) => {
+  restrictRoute(2, req, res, next)
+}
+
+const admin_restricted = (req, res, next) => {
+  restrictRoute(3, req, res, next)
+}
+
+module.exports = { user_restricted, mod_restricted, admin_restricted }
