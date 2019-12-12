@@ -13,6 +13,7 @@ const user_restricted =  (req, res, next) => {
         decodedToken.user = await Users.findById(decodedToken.user.user_id)
         req.decodedToken = decodedToken
         next();
+        return
       }
     })
   }else{
@@ -22,6 +23,7 @@ const user_restricted =  (req, res, next) => {
 }
 
 function mod_restricted(req, res, next) {
+  user_restricted(req, res)
   if(req.decodedToken) {
     req.decodedToken.user.user_role >= 2 ? next() : res.status(500).send("Permission missing.")
   } else {
@@ -30,6 +32,7 @@ function mod_restricted(req, res, next) {
 }
 
 function admin_restricted(req, res, next) {
+  user_restricted(req, res)
   if(req.decodedToken) {
     req.decodedToken.user.user_role >= 3 ? next() : res.status(500).send("Permission missing.")
   } else {

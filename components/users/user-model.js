@@ -10,7 +10,9 @@ module.exports = {
   getThumbnail,
   add,
   update,
-  remove
+  remove,
+  verify,
+  updatePassword
 };
 
 
@@ -22,15 +24,15 @@ function find(username) {
 
 function findById(id) {
   return db('users')
-    .where( 'user_id', id )
+    .where('user_id', id)
     .first();
 }
 
-function findUser(key) {
+function findUser(email, username = email) {
   return db('users')
-  .where('user_email', key)
-  .orWhere('username', key)
-  .first();
+    .where('user_email', email)
+    .orWhere('username', username)
+    .first();
 }
 
 function findByUsername(username) {
@@ -74,6 +76,17 @@ function update(changes, id) {
 
 function remove(id) {
   return db('users')
-    .where( 'user_id', id )
+    .where('user_id', id)
     .del();
+}
+
+function verify(id) {
+  return update({ user_verified: true }, id)
+}
+
+function updatePassword(hash, id) {
+  return update({
+    password: hashedPassword,
+    forgotten_password_reset_time: null
+  }, user.user_id)
 }
