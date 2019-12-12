@@ -46,10 +46,6 @@ router.post('/', user_restricted, multerUploads, cloudinaryConfig, (req, res) =>
   const imageData = req.body;
   const imageFile = req.file;
 
-  imageData.thumbnail = !!imageData.thumbnail
-
-  console.log(imageData.thumbnail)
-  if(imageData.thumbnail) { Images.removeThumbnail(imageData) }
 
   //store the process image as a 'data-uri'
   const file = dataUri(req).content;

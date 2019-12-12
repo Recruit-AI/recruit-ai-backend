@@ -3,6 +3,7 @@ const router = express.Router();
 const authenticate = require('./restricted-middleware.js')
 
 const Users = require('./user-model.js');
+const Images = require('../images/image-model.js');
 
 const userKindsInfo = require('./userKinds/user_kinds-model')
 
@@ -17,9 +18,10 @@ router.get('/profile/:id', async (req, res) => {
   const user = await Users.findById(id)
 
   const UserKindDb = userKindsInfo(user.user_kind)
-  const userInfo = await UserKindDb.findByUserId(id)
+  const info = await UserKindDb.findByUserId(id)
+  const thumbnail = await Images.getThumbnail('user', id)
 
-  res.json({ ...user, info: userInfo })
+  res.json({ ...user, info, thumbnail })
 
 });
 
