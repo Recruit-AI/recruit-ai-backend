@@ -19,6 +19,9 @@ server.use('/api/logs', LogRouter);
 //Log all creates & edits with the user who did so. Ability to view logs & undo changes.
 const FeedbackRouter = require('./components/feedback/feedback-router.js');
 server.use('/api/feedback', FeedbackRouter);
+//Log all creates & edits with the user who did so. Ability to view logs & undo changes.
+const SupportTicketRouter = require('./components/supportTickets/support_ticket-router.js');
+server.use('/api/support-tickets', SupportTicketRouter);
 
 //Thumbnail & image gallery functionality.
 const ImageRouter = require('./components/images/image-router.js');

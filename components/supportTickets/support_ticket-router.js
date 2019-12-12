@@ -1,21 +1,22 @@
 const express = require('express');
 
-const Feedbacks = require('./feedback-model.js');
+const SupportTickets = require('./support_ticket-model.js');
 const paginate = require('jw-paginate')
 
 const router = express.Router();
 const authenticate = require('../users/restricted-middleware.js')
 
 router.get('/', authenticate.admin_restricted, (req, res) => {
-  const filter = req.query.filter || "unlogged"
+  const filter = req.query.filter || ""
+  //filter- "unread", "open", "closed"
 
-  Feedbacks.find(filter)
+  SupportTickets.find(filter)
     .then(items => {
       // get page from query params or default to first page
       const page = parseInt(req.query.page) || 1;
 
       // get pager object for specified page
-      const pageSize = 25;
+      const pageSize = 10;
       const pager = paginate(items.length, page, pageSize);
 
       // get page of items from items array
@@ -32,27 +33,27 @@ router.get('/', authenticate.admin_restricted, (req, res) => {
 router.get('/:id', authenticate.admin_restricted, (req, res) => {
   const { id } = req.params;
 
-  Feedbacks.findById(id)
-  .then(feedback => {
-    if (feedback) {
-      res.json(feedback)
+  SupportTickets.findById(id)
+  .then(support_ticket => {
+    if (support_ticket) {
+      res.json(support_ticket)
     } else {
-      res.status(404).json({ message: 'Could not find feedback with given id.' })
+      res.status(404).json({ message: 'Could not find support_ticket with given id.' })
     }
   })
-  .catch(err => {res.status(500).json({ message: 'Failed to get feedbacks' });});
+  .catch(err => {res.status(500).json({ message: 'Failed to get support_tickets' });});
 });
 
 
 router.post('/', (req, res) => {
-  const feedbackData = req.body;
+  const support_ticketData = req.body;
 
-  Feedbacks.add(feedbackData)
-  .then(feedback => {
-    res.status(201).json(feedback);
+  SupportTickets.add(support_ticketData)
+  .then(support_ticket => {
+    res.status(201).json(support_ticket);
   })
   .catch (err => {
-    res.status(500).json({ message: 'Failed to create new feedback' });
+    res.status(500).json({ message: 'Failed to create new support_ticket' });
   });
 
 });
@@ -60,24 +61,24 @@ router.post('/', (req, res) => {
 router.put('/confirm/:id', authenticate.admin_restricted, (req, res) => {
   const { id } = req.params;
 
-  Feedbacks.update({logged: true}, id)
-  .then(updatedFeedback => {
-    res.json(updatedFeedback);
+  SupportTickets.update({logged: true}, id)
+  .then(updatedSupportTicket => {
+    res.json(updatedSupportTicket);
   })
   .catch (err => {
-    res.status(500).json({ message: 'Failed to update feedback' });
+    res.status(500).json({ message: 'Failed to update support_ticket' });
   });
 
 });
 
 router.delete('/:id', authenticate.admin_restricted, (req, res) => {
   const { id } = req.params;
-  Feedbacks.remove(id)
+  SupportTickets.remove(id)
   .then(deleted => {
     res.send("Success.")
   })
   .catch(err => {
-    res.status(500).json({ message: 'Failed to delete feedback' })
+    res.status(500).json({ message: 'Failed to delete support_ticket' })
   });
 });
 

@@ -12,8 +12,12 @@ const getToken = async (req, res) => {
       }
       else {
         decodedToken.user = await Users.findById(decodedToken.user.user_id)
-        req.decodedToken = decodedToken
-        ret = true
+        if(decodedToken.user) {
+          req.decodedToken = decodedToken
+          ret = true
+        } else {
+          ret = false
+        }
       }
     })
   }

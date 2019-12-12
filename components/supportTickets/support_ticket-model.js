@@ -10,22 +10,24 @@ module.exports = {
 
 
 function find(filter) {
-  return db('feedbacks')
-  .where('logged', filter === 'logged')
-
+  let query = db('support_tickets')
+  if(filter != "") {
+    query = query.where('support_ticket_state', filter)
+  } 
+  return query
 }
 
 
 function findById(id) {
-  return db('feedbacks')
-    .where( 'feedback_id', id )
+  return db('support_tickets')
+    .where( 'support_ticket_id', id )
     .first();
 }
 
-function add(feedback) {
-  return db('feedbacks')
-    .insert(feedback)
-    .returning('feedback_id')
+function add(support_ticket) {
+  return db('support_tickets')
+    .insert(support_ticket)
+    .returning('support_ticket_id')
     .then(res => {
       return findById(res[0])
     })
@@ -36,10 +38,10 @@ function add(feedback) {
 }
 
 function update(changes, id) {
-  return db('feedbacks')
-    .where('feedback_id', id)
+  return db('support_tickets')
+    .where('support_ticket_id', id)
     .update(changes)
-    .returning('feedback_id')
+    .returning('support_ticket_id')
     .then(res => {
       return findById(res[0])
     })
@@ -50,7 +52,7 @@ function update(changes, id) {
 }
 
 function remove(id) {
-  return db('feedbacks')
-    .where( 'feedback_id', id )
+  return db('support_tickets')
+    .where( 'support_ticket_id', id )
     .del();
 }
