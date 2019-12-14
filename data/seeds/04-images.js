@@ -14,7 +14,7 @@ exports.seed = function(knex) {
       objects.push({...baseImage, foreign_class: "User", foreign_id: i})
     }
     for(var j=1;j<8;j++) {
-      objects.push({...baseImage, foreign_class: "SiteBlog", foreign_id: i})
+      objects.push({...baseImage, foreign_class: "SiteBlog", foreign_id: j})
     }
 
     return knex('images').insert(objects);

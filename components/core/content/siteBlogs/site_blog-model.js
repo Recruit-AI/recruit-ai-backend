@@ -21,24 +21,10 @@ function find(sort, sortdir, searchTerm, category, tag) {
       'username AS author_username',
       'blog_title',
       'blog_tags',
-      'blog_category',
-      'image_url',
-      'image_title',
-      'image_source',
-      'image_description',
-      'image_id')
+      'blog_category')
     .leftJoin('users', 'site_blogs.author_id', 'users.user_id')
-    .leftJoin('images', 'site_blogs.site_blog_id', 'images.foreign_id')
     .where('blog_title', 'iLIKE', `%${searchTerm}%`)
     .andWhere('blog_category', category)
-    
-    .andWhere(function () {
-      this.where(function () {
-        this.where('foreign_class', "SiteBlog").andWhere('image_kind', 'thumbnail')
-      }).orWhere(function () {
-        this.whereNull('foreign_class').whereNull('image_kind')
-      })
-    })
 
     if(tag !== "") { query = query.where(db.raw(`'${tag}' = ANY(blog_tags)`)) }
     

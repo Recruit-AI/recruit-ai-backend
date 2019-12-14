@@ -5,6 +5,7 @@ exports.up = function (knex, Promise) {
             tbl.text('page_title')
             tbl.text('page_body_text')
             tbl.text('page_category')
+            tbl.text('page_symbol')
             tbl.integer('page_order').defaultTo(0)
         })
 
