@@ -1,4 +1,5 @@
 const db = require('../../../../data/dbConfig.js');
+const knex = require('knex')
 
 module.exports = {
   find,
@@ -12,37 +13,60 @@ module.exports = {
 
 
 
-function find(sort, sortdir, searchTerm) {
-  return db('site_blogs')
-  .orderBy(sort, sortdir)
-  .where('blog_title', 'iLIKE', `%${searchTerm}%`)
-  
-  .then()
-  .catch(err => console.log(err))
+function find(sort, sortdir, searchTerm, category, tag) {
+  let query = db('site_blogs')
+    .orderBy(sort, sortdir)
+    .select('site_blog_id',
+      'author_id',
+      'username AS author_username',
+      'blog_title',
+      'blog_tags',
+      'blog_category',
+      'image_url',
+      'image_title',
+      'image_source',
+      'image_description',
+      'image_id')
+    .leftJoin('users', 'site_blogs.author_id', 'users.user_id')
+    .leftJoin('images', 'site_blogs.site_blog_id', 'images.foreign_id')
+    .where('blog_title', 'iLIKE', `%${searchTerm}%`)
+    .andWhere('blog_category', category)
+    
+    .andWhere(function () {
+      this.where(function () {
+        this.where('foreign_class', "SiteBlog").andWhere('image_kind', 'thumbnail')
+      }).orWhere(function () {
+        this.whereNull('foreign_class').whereNull('image_kind')
+      })
+    })
+
+    if(tag !== "") { query = query.where(db.raw(`'${tag}' = ANY(blog_tags)`)) }
+    
+    return query
 
 }
 
 function listOfNames() {
   return db('site_blogs')
-  .select('blog_title', 'site_blog_id')
+    .select('blog_title', 'site_blog_id')
 }
 
 function findById(id) {
   return db('site_blogs')
-    .where( 'site_blog_id', id )
+    .where('site_blog_id', id)
     .first();
 }
 
 function findByName(name, excludingId = null) {
-  if(excludingId) {
+  if (excludingId) {
     return db('site_blogs')
-    .where('blog_title', name)
-    .whereNot('site_blog_id', excludingId)
-    .first()
+      .where('blog_title', name)
+      .whereNot('site_blog_id', excludingId)
+      .first()
   } else {
     return db('site_blogs')
-    .where('blog_title', name)
-    .first()
+      .where('blog_title', name)
+      .first()
   }
 }
 
@@ -58,11 +82,15 @@ function add(site_blog) {
 function update(changes, id) {
   return db('site_blogs')
     .where('site_blog_id', id)
-    .update(changes);
+    .update(changes)
+    .returning('site_blog_id')
+    .then(res => {
+      return findById(res[0])
+    })
 }
 
 function remove(id) {
   return db('site_blogs')
-    .where( 'site_blog_id', id )
+    .where('site_blog_id', id)
     .del();
 }

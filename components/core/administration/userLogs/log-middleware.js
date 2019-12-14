@@ -21,7 +21,7 @@ function log(req, previous, changes = req.body || {}) {
     changes = actualChanges
   }
 
-  const LogDb = require('./log-model.js.js')
+  const LogDb = require('./log-model.js')
   LogDb.add({changes, previous, log_submitting_user_id, route, method, object_id})
 
   return "Logged."

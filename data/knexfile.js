@@ -11,8 +11,8 @@ module.exports = {
       database : 'simple-blog',
       charset: 'utf8'
     },
-    migrations: { directory: './data/migrations' },
-    seeds: { directory: './data/seeds' }
+    migrations: { directory: './migrations' },
+    seeds: { directory: './seeds' }
   },
     testing: {
       client: 'pg',
@@ -23,14 +23,14 @@ module.exports = {
         database : 'simple-blog-test',
         charset: 'utf8'
       },
-      migrations: { directory: './data/migrations' },
-      seeds: { directory: './data/seeds' }
+      migrations: { directory: './migrations' },
+      seeds: { directory: './seeds' }
     },
   production: {
     client: 'pg',
     connection: process.env.DATABASE_URL,
-    migrations: { directory: './data/migrations' },
-    seeds: { directory: './data/seeds' }
+    migrations: { directory: './migrations' },
+    seeds: { directory: './seeds' }
   }
 
 

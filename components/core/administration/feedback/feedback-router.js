@@ -8,8 +8,9 @@ const authenticate = require('../../accounts/restricted-middleware.js')
 
 router.get('/', authenticate.admin_restricted, (req, res) => {
   const filter = req.query.filter || "unlogged"
+  const kind = req.query.kind || ""
 
-  Feedbacks.find(filter)
+  Feedbacks.find(filter, kind)
     .then(items => {
       // get page from query params or default to first page
       const page = parseInt(req.query.page) || 1;

@@ -12,7 +12,7 @@ exports.up = function (knex, Promise) {
       tbl.string('ban_notes');
       tbl.datetime('last_login_attempt');
       tbl.integer('login_attempts');
-      tbl.boolean('mailing_list');
+      tbl.boolean('mailing_list').defaultTo(false);
       tbl.string('forgotten_password_reset_time')
     })
 

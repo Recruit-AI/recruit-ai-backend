@@ -10,10 +10,12 @@ const authenticate = require('../../accounts/restricted-middleware.js')
 
 router.get('/', (req, res) => {
   const sort = req.query.sort || "blog_title"
+  const category = req.query.category || "Blog"
+  const tag = req.query.tag  || ""
   const sortdir = req.query.sortdir || "ASC"
   const searchTerm = req.query.search || ""
 
-  SiteBlogs.find(sort, sortdir, searchTerm)
+  SiteBlogs.find(sort, sortdir, searchTerm, category, tag)
     .then(site_blogs => {
 
       // get page from query params or default to first page
@@ -31,13 +33,13 @@ router.get('/', (req, res) => {
         pager, pageOfSiteBlogs: pageOfSiteBlogs.map(
           site_blog => ({
             ...site_blog,
-            thumbnail: {
+            thumbnail: site_blog.image_url ? {
                image_url: site_blog.image_url,
                image_title: site_blog.image_title,
-               image_source: site_blog.image_title,
+               image_source: site_blog.image_source,
                image_description: site_blog.image_description,
                image_id: site_blog.image_id
-            }
+            } : {}
           })
         )
       });
@@ -84,7 +86,9 @@ router.put('/:id', authenticate.user_restricted, async (req, res) => {
   const { id } = req.params;
   const changes = req.body;
 
-  if (await SiteBlogs.findByName(changes.site_blog_name, id)) {
+  const site_blog = await SiteBlogs.findById(id)
+
+  if (await SiteBlogs.findByName(changes.blog_title, id)) {
     res.status(400).json({ message: "A record with this name already exists." })
   } else {
     SiteBlogs.update(changes, id)

@@ -1,5 +1,4 @@
 const express = require('express');
-const paginate = require('jw-paginate')
 const router = express.Router();
 
 const SitePages = require('./site_page-model.js');
@@ -51,7 +50,9 @@ router.put('/:id', authenticate.user_restricted, async (req, res) => {
   const { id } = req.params;
   const changes = req.body;
 
-  if (await SitePages.findByName(changes.site_page_name, id)) {
+
+  const site_page = await SitePages.findById(id)
+  if (await SitePages.findByName(changes.page_title, id)) {
     res.status(400).json({ message: "A record with this name already exists." })
   } else {
     SitePages.update(changes, id)

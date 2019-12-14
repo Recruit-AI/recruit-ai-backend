@@ -60,7 +60,11 @@ function add(image) {
 function update(changes, id) {
   return db('images')
     .where('image_id', id)
-    .update(changes);
+    .update(changes)
+    .returning('image_id')
+    .then(res => {
+      return findById(res[0])
+    });
 }
 
 function remove(id) {

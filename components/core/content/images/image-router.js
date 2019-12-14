@@ -44,8 +44,6 @@ router.get('/:id', (req, res) => {
 
 router.post('/', user_restricted, multerUploads, cloudinaryConfig, (req, res) => {
   const imageData = req.body;
-  const imageFile = req.file;
-
 
   //store the process image as a 'data-uri'
   const file = dataUri(req).content;
@@ -91,8 +89,6 @@ router.put('/:id', user_restricted, multerUploads, cloudinaryConfig, (req, res) 
       Images.findById(id)
       .then(image => {
         if (image) {
-          log(req, image) //Find a way to log that being a thumbnail again
-          //If the incoming image is being set as thumnbnail, remove the current one.
           if(imageData.thumbnail) { Images.removeThumbnail(image) }
           Images.update(imageData, id)
           .then(updatedImage => {

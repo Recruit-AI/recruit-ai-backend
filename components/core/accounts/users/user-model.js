@@ -19,7 +19,7 @@ module.exports = {
 
 function find(username) {
   return db('users')
-    .where('username', 'LIKE', `%${username}%`)
+    .where('username', 'iLIKE', `%${username}%`)
 }
 
 function findById(id) {
@@ -27,23 +27,22 @@ function findById(id) {
     .where('user_id', id)
     .first();
 }
-
-function findUser(email, username = email) {
+function findUser(email, username = null) {
   return db('users')
-    .where('user_email', email)
-    .orWhere('username', username)
+    .where('user_email', 'iLIKE', '%'+email+'%')
+    .orWhere('username', 'iLIKE', '%'+(username || email)+'%')
     .first();
 }
 
 function findByUsername(username) {
   return db('users')
-    .where({ username })
+    .where('username', 'iLIKE', '%'+username+'%')
     .first();
 }
 
 function findByEmail(user_email) {
   return db('users')
-    .where({ user_email })
+  .where('user_email', 'iLIKE', '%'+email+'%')
     .first();
 }
 

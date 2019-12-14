@@ -9,11 +9,14 @@ module.exports = {
 };
 
 
-function find(filter) {
+function find(filter, kind) {
   let query = db('support_tickets')
   if(filter != "") {
     query = query.where('support_ticket_state', filter)
   } 
+  if(kind != "") {
+    query = query.where('support_ticket_kind', kind)
+  }
   return query
 }
 

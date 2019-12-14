@@ -8,9 +8,11 @@ const authenticate = require('../../accounts/restricted-middleware.js')
 
 router.get('/', authenticate.admin_restricted, (req, res) => {
   const filter = req.query.filter || ""
+  const kind = req.query.kind || ""
+
   //filter- "unread", "open", "closed"
 
-  SupportTickets.find(filter)
+  SupportTickets.find(filter, kind)
     .then(items => {
       // get page from query params or default to first page
       const page = parseInt(req.query.page) || 1;
@@ -58,10 +60,11 @@ router.post('/', (req, res) => {
 
 });
 
-router.put('/confirm/:id', authenticate.admin_restricted, (req, res) => {
+router.put('/:id', authenticate.admin_restricted, (req, res) => {
   const { id } = req.params;
+  const changes = req.body
 
-  SupportTickets.update({logged: true}, id)
+  SupportTickets.update(changes, id)
   .then(updatedSupportTicket => {
     res.json(updatedSupportTicket);
   })

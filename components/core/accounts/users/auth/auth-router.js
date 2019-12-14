@@ -42,12 +42,16 @@ router.post('/register', async (req, res) => {
   //Test the password's strength and start to keep track of errors
   var pwStrength = owasp.test(userData.password);
   let errors = pwStrength.errors
+  
+  var regex = /^[A-Za-z0-9]+$/
+  var isValid = regex.test(userData.username);
+  if(!isValid) { errors.push("Username can only contain letters & numbers, no spaces or symbols.")}
 
   //See if the username/email is taken, and add to errors if true.
-  var userSearch;
-  if (userSearch = await Users.findUser(userData.user_email, userData.username)) {
-    if (userSearch.username === userData.username) { errors.push("That username is taken.") }
-    if (userSearch.user_email === userData.user_email) { errors.push("That email is taken.") }
+  var userSearch = await Users.findUser(userData.user_email, userData.username)
+  if (userSearch.user_id) {
+    if (userSearch.username.toLowerCase() === userData.username.toLowerCase()) { errors.push("That username is taken.") }
+    if (userSearch.user_email.toLowerCase() === userData.user_email.toLowerCase()) { errors.push("That email is taken.") }
   }
 
   if (errors.length === 0) {
@@ -181,6 +185,9 @@ router.put('/edit', authenticate.user_restricted, async (req, res) => {
   }
 
   if (changes.username && (changes.username != user.username)) {
+    var regex = /^[A-Za-z0-9]+$/
+    var isValid = regex.test(changes.username);
+    if(!isValid) { errors.push("Username can only contain letters & numbers, no spaces or symbols.")}
     usernameSearch = await Users.findByUsername(changes.username)
     if (usernameSearch) { errors.push("That username is taken.") }
   }

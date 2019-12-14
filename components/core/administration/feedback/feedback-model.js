@@ -9,10 +9,13 @@ module.exports = {
 };
 
 
-function find(filter) {
-  return db('feedbacks')
+function find(filter, kind) {
+  let query = db('feedbacks')
   .where('logged', filter === 'logged')
-
+  if(kind !== '') {
+    query = query.where("feedback_kind", kind)
+  }
+  return query
 }
 
 

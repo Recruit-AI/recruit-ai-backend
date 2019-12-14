@@ -47,7 +47,11 @@ function add(site_page) {
 function update(changes, id) {
   return db('site_pages')
     .where('site_page_id', id)
-    .update(changes);
+    .update(changes)
+    .returning('site_page_id')
+    .then(res => {
+      return findById(res[0])
+    })
 }
 
 function remove(id) {
