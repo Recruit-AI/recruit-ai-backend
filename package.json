@@ -4,8 +4,8 @@
   "description": "Challenge for Node DB3 Module",
   "main": "index.js",
   "scripts": {
-    "server": "nodemon index.js",
-    "start": "node index.js",
+    "server": "nodemon ./api/index.js",
+    "start": "node ./api/index.js",
     "test": "cross-env NODE_ENV=testing jest --watch --verbose"
   },
   "repository": {

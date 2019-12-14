@@ -7,9 +7,10 @@ exports.up = function(knex, Promise) {
       tbl.integer('foreign_id');
       tbl.text('foreign_class', 128);
       tbl.text('image_url');
-      tbl.boolean('thumbnail');
+      tbl.text('image_kind');
       tbl.text('image_title', 128);
       tbl.text('image_description');
+      tbl.text('image_source');
     })
 
 };

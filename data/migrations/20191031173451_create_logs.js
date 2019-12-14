@@ -21,6 +21,7 @@ exports.up = function(knex, Promise) {
       tbl.json('previous')
       tbl.text('notes')
       tbl.boolean('log_confirmed')
+      tbl.integer('object_id')
     })
 
 };

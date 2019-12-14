@@ -3,6 +3,7 @@ exports.up = function(knex, Promise) {
       .createTable('ip_logs', tbl => {
         tbl.increments('ip_log_id');
         tbl.text('ip_address').notNullable();
+        tbl.timestamps(false, true)
       })
   
   };
