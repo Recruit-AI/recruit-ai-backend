@@ -49,7 +49,7 @@ router.post('/register', async (req, res) => {
 
   //See if the username/email is taken, and add to errors if true.
   var userSearch = await Users.findUser(userData.user_email, userData.username)
-  if (userSearch.user_id) {
+  if (userSearch && userSearch.user_id) {
     if (userSearch.username.toLowerCase() === userData.username.toLowerCase()) { errors.push("That username is taken.") }
     if (userSearch.user_email.toLowerCase() === userData.user_email.toLowerCase()) { errors.push("That email is taken.") }
   }
