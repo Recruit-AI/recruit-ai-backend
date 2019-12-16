@@ -18,10 +18,10 @@ router.get('/profile/:id', async (req, res) => {
   const user = await Users.findById(id)
 
   const UserKindDb = userKindsInfo(user.user_kind)
-  const info = await UserKindDb.findByUserId(id)
+  const userInfo = await UserKindDb.findByUserId(id)
   const thumbnail = await Images.getThumbnail('User', id)
 
-  res.json({ ...user, info, thumbnail })
+  res.json({ ...user, userInfo, thumbnail })
 
 });
 

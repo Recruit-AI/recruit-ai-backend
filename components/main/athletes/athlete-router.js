@@ -6,8 +6,10 @@ const Athletes = require('./athlete-model.js');
 const { log } = require('../../core/administration/userLogs/log-middleware.js')
 const authenticate = require('../../core/accounts/restricted-middleware.js')
 
-router.get('/', (req, res) => {
-  Athletes.find()
+router.get('/', authenticate.user_restricted, (req, res) => {
+  const user = req.decodedToken.user
+
+  Athletes.find(user.userInfo.team_id)
     .then(athletes => {
       res.json(athletes)
     })
@@ -30,7 +32,6 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', authenticate.user_restricted, async (req, res) => {
   const athleteData = req.body;
-
   
     Athletes.add(athleteData)
       .then(athlete => {
@@ -42,6 +43,29 @@ router.post('/', authenticate.user_restricted, async (req, res) => {
   
 });
 
+router.put('/notes/:id', authenticate.user_restricted, async (req, res) => {
+  const id = req.params.id
+  const user = req.decodedToken.user
+  let notes = req.body.notes
+
+  date = new Date(Date.now()),
+  v = [
+    date.getFullYear(),
+    date.getMonth()+1,
+    date.getDate(),
+    date.getHours(),
+    date.getMinutes(),
+  ];
+  const dateString = `${v[1]}/${v[2]} ${v[0]}, ${v[3]}:${v[4]}`
+  let athlete = await Athletes.findById(id)
+
+  notes = athlete.notes + notes + `\n${user.userInfo.user_display_name}- ${dateString}\n\n\n`
+
+  athlete = await Athletes.update({notes}, id)
+
+  res.json(athlete)
+
+})
 
 router.put('/:id', authenticate.user_restricted, async (req, res) => {
   const { id } = req.params;

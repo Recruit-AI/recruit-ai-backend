@@ -2,6 +2,8 @@
 const jwt = require('jsonwebtoken')
 const Users = require('./users/user-model.js')
 
+const userKindsInfo = require('./users/userKinds/user_kinds-model')
+
 const getToken = async (req, res) => {
   const token = req.headers.authorization
   let ret = false;
@@ -11,7 +13,11 @@ const getToken = async (req, res) => {
         ret = false
       }
       else {
-        decodedToken.user = await Users.findById(decodedToken.user.user_id)
+        let retUser = await Users.findById(decodedToken.user.user_id)
+        const UserKindDb = userKindsInfo(retUser.user_kind)
+        const userInfo = await UserKindDb.findByUserId(retUser.user_id)
+        retUser.userInfo = userInfo
+        decodedToken.user = retUser
         if(decodedToken.user) {
           req.decodedToken = decodedToken
           ret = true

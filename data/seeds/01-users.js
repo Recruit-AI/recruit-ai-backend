@@ -49,11 +49,11 @@ exports.seed = function (knex) {
             user_kind: "end_user",
             user_verified: true
         },
-
-        //A test team
+        
+        //A small test team
         {
             password: password,
-            username: "TestHeadCoach1",
+            username: "SmallHeadCoach1",
             user_email: "coach1@gmail.com",
             user_role: 1,
             user_kind: "end_user",
@@ -61,8 +61,50 @@ exports.seed = function (knex) {
         },
         {
             password: password,
-            username: "TestAsstCoach2",
+            username: "SmallAsstCoach1",
+            user_email: "smassistant@gmail.com",
+            user_role: 1,
+            user_kind: "end_user",
+            user_verified: true
+        },
+        {
+            password: password,
+            username: "SmallAsstCoach2",
+            user_email: "smassistant2@gmail.com",
+            user_role: 1,
+            user_kind: "end_user",
+            user_verified: true
+        },
+
+        //A big test team
+        {
+            password: password,
+            username: "TestHeadCoach1",
+            user_email: "tcoach1@gmail.com",
+            user_role: 1,
+            user_kind: "end_user",
+            user_verified: true
+        },
+        {
+            password: password,
+            username: "TestAsstCoach1",
             user_email: "assistant@gmail.com",
+            user_role: 1,
+            user_kind: "end_user",
+            user_verified: true
+        },
+        {
+            password: password,
+            username: "TestAsstCoach2",
+            user_email: "assistant2@gmail.com",
+            user_role: 1,
+            user_kind: "end_user",
+            user_verified: true
+        },
+        {
+            password: password,
+            username: "TestAsstCoach3",
+            user_email: "assistant3@gmail.com",
             user_role: 1,
             user_kind: "end_user",
             user_verified: true
@@ -71,6 +113,14 @@ exports.seed = function (knex) {
             password: password,
             username: "TestRecruiter",
             user_email: "recruiter@gmail.com",
+            user_role: 1,
+            user_kind: "end_user",
+            user_verified: true
+        },
+        {
+            password: password,
+            username: "TestRecruiter2",
+            user_email: "recruiter2@gmail.com",
             user_role: 1,
             user_kind: "end_user",
             user_verified: true

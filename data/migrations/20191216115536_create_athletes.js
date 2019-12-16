@@ -10,6 +10,13 @@ exports.up = function (knex, Promise) {
                 .inTable('users')
                 .onUpdate('CASCADE')
                 .onDelete('CASCADE');
+            tbl.integer('team_id')
+                .unsigned()
+                .notNullable()
+                .references('user_id')
+                .inTable('users')
+                .onUpdate('CASCADE')
+                .onDelete('CASCADE');
             tbl.text('notes');
             tbl.json('application_process')
             tbl.text('first_name');
@@ -25,12 +32,12 @@ exports.up = function (knex, Promise) {
         })
 };
 
-exports.down = function(knex, Promise) {
+exports.down = function (knex, Promise) {
     // drops the entire table
     return knex.schema
-      .dropTableIfExists('athletes')
-  };
-  
+        .dropTableIfExists('athletes')
+};
+
 //   {
 //     "athlete_id": 1,
 //     "preferred_name": "Bob",
