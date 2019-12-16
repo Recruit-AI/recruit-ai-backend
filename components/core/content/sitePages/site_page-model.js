@@ -13,6 +13,7 @@ module.exports = {
 
 function find() {
   return db('site_pages')
+  .orderBy('page_order')
 
 }
 

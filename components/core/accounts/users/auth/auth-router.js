@@ -42,10 +42,10 @@ router.post('/register', async (req, res) => {
   //Test the password's strength and start to keep track of errors
   var pwStrength = owasp.test(userData.password);
   let errors = pwStrength.errors
-  
+
   var regex = /^[A-Za-z0-9]+$/
   var isValid = regex.test(userData.username);
-  if(!isValid) { errors.push("Username can only contain letters & numbers, no spaces or symbols.")}
+  if (!isValid) { errors.push("Username can only contain letters & numbers, no spaces or symbols.") }
 
   //See if the username/email is taken, and add to errors if true.
   var userSearch = await Users.findUser(userData.user_email, userData.username)
@@ -59,7 +59,6 @@ router.post('/register', async (req, res) => {
     const user = await Users.add(userData)
 
     const userInfo = await createUserKindInfo(user)
-
     user.userInfo = userInfo
 
     const user_hash = registerEmail(user)
@@ -138,25 +137,23 @@ router.put("/resetPassword/:username/:user_hash", async (req, res) => {
 //PUT /users/auth/resetPassword/:username_or_email/:user_hash
 //Takes a 
 //---------------------------------------------
-router.post('/login', check_ip_ban, (req, res) => {
+router.post('/login', check_ip_ban, async (req, res) => {
   let { username, password } = req.body
-  console.log("IP BAN?", username, password)
 
-  Users.findUser(username)
-    .then(user => {
-      if (user && bcrypt.compareSync(password, user.password) && user.user_verified) {
-        console.log("PT", user)
-        const token = generateToken(user)
-        console.log("POSTT")
-        delete user.password
-        res.status(200).json({ message: "Welcome!", token: token, user: user })
-      } else {
-        res.status(500).json({ message: "Invalid Credentials." })
-      }
-    })
-    .catch(error => {
-      res.status(500).json({ message: "Invalid Credentials." })
-    })
+  const user = await Users.findUser(username)
+
+  if (user && bcrypt.compareSync(password, user.password) && user.user_verified) {
+
+    const userInfo = await getUserKindInfo(user)
+    user.userInfo = userInfo
+
+    const token = generateToken(user)
+    delete user.password
+    res.status(200).json({ message: "Welcome!", token: token, user: user })
+  } else {
+    res.status(500).json({ message: "Invalid Credentials." })
+  }
+
 });
 
 
@@ -188,7 +185,7 @@ router.put('/edit', authenticate.user_restricted, async (req, res) => {
   if (changes.username && (changes.username != user.username)) {
     var regex = /^[A-Za-z0-9]+$/
     var isValid = regex.test(changes.username);
-    if(!isValid) { errors.push("Username can only contain letters & numbers, no spaces or symbols.")}
+    if (!isValid) { errors.push("Username can only contain letters & numbers, no spaces or symbols.") }
     usernameSearch = await Users.findByUsername(changes.username)
     if (usernameSearch) { errors.push("That username is taken.") }
   }
@@ -212,13 +209,13 @@ router.put('/edit/info', authenticate.user_restricted, (req, res) => {
   const infoData = req.body;
   const user = req.decodedToken.user;
   const id = user.user_id
-  
+
   const UserKindDb = userKindsInfo(user.user_kind)
 
   UserKindDb.updateByUserId(infoData, id)
     .then(updateInfo => {
       user.info = updateInfo
-      res.json( user ) ;
+      res.json(user);
     })
     .catch(err => {
       res.status(500).json({ message: 'Failed to update the users information' });
@@ -241,7 +238,13 @@ module.exports = router;
 
 async function createUserKindInfo(user) {
   const UserKindDb = userKindsInfo(user.user_kind)
-  const userInfo = await UserKindDb.add({foreign_user_id: user.user_id})
+  const userInfo = await UserKindDb.add({ foreign_user_id: user.user_id })
+  return userInfo
+}
+
+async function getUserKindInfo(user) {
+  const UserKindDb = userKindsInfo(user.user_kind)
+  const userInfo = await UserKindDb.findByUserId(user.user_id)
   return userInfo
 }
 
@@ -312,16 +315,16 @@ function cleanAndSetInput(userData) {
 function registerEmail(user) {
   //generate another hash from username to send in "verify" getThumbnail
   const user_hash = registrationHash(user)
-  const link = `https://grimwire.netlify.com/users/verify/${user.user_id}/${encodeURIComponent(user_hash)}` //This should be a front end link
-  const text = `Thank you for registering for Grimwire. You can copy & paste this link to complete the verification process: ${link}`
+  const link = `https://recruit-ai.netlify.com/users/verify/${user.user_id}/${encodeURIComponent(user_hash)}` //This should be a front end link
+  const text = `Thank you for registering for RecruitAI. You can copy & paste this link to complete the verification process: ${link}`
   const html = verifyEmailTemplate(link)
-  sendEmail(user, "Thank You For Registering With GrimWire", text, html)
+  sendEmail(user, "Thank You For Registering With RecruitAI", text, html)
   return user_hash
 }
 
 function forgotPasswordEmail(user) {
   const user_hash = forgotPasswordHash(user)
-  const link = `https://grimwire.netlify.com/users/resetPassword/${user.username}/${encodeURIComponent(user_hash)}` //This should be a front end link
+  const link = `https://recruit-ai.netlify.com/users/resetPassword/${user.username}/${encodeURIComponent(user_hash)}` //This should be a front end link
   const text = `You can copy and past this link into your browser to reset your password: ${link}`
   const html = forgotPasswordTemplate(link)
   sendEmail(user, "Your forgotten password link,", text, html)
