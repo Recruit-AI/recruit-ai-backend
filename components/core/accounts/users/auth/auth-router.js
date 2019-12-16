@@ -144,9 +144,10 @@ router.post('/login', check_ip_ban, (req, res) => {
 
   Users.findUser(username)
     .then(user => {
-      console.log(user.password, user.user_verified)
       if (user && bcrypt.compareSync(password, user.password) && user.user_verified) {
+        console.log("PT", user)
         const token = generateToken(user)
+        console.log("POSTT")
         delete user.password
         res.status(200).json({ message: "Welcome!", token: token, user: user })
       } else {
@@ -275,7 +276,7 @@ const getUserIP = (req) => {
 //Returns a nice JSON token with the user object attached.
 function generateToken(user) {
   const payload = {
-    subject: user.id, // sub in payload is what the token is about
+    subject: user.user_id, // sub in payload is what the token is about
     user: user
   };
 

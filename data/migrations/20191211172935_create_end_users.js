@@ -9,10 +9,12 @@ exports.up = function (knex, Promise) {
                 .inTable('users')
                 .onUpdate('CASCADE')
                 .onDelete('CASCADE');
-            tbl.text('user_full_name');
-            tbl.text('user_bio');
-            tbl.text('user_link', 128);
-            tbl.text('user_link_description');
+            tbl.text('user_first_name');
+            tbl.text('user_last_name');
+            tbl.text('user_professinal_title');
+            tbl.text('user_display_name');
+            tbl.specificType('athlete_watch_list', 'text ARRAY');
+            tbl.integer('alert_settings')
         })
 
 };

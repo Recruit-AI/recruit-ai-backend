@@ -29,8 +29,8 @@ function findById(id) {
 }
 function findUser(email, username = null) {
   return db('users')
-    .where('user_email', 'iLIKE', '%'+email+'%')
-    .orWhere('username', 'iLIKE', '%'+(username || email)+'%')
+    .where('user_email', 'iLIKE', email)
+    .orWhere('username', 'iLIKE', username || email)
     .first();
 }
 
