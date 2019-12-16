@@ -34,7 +34,6 @@ router.post('/', authenticate.user_restricted, async (req, res) => {
   
     Athletes.add(athleteData)
       .then(athlete => {
-        log(req, {}, athlete)
         res.status(201).json(athlete);
       })
       .catch(err => {
@@ -49,19 +48,15 @@ router.put('/:id', authenticate.user_restricted, async (req, res) => {
   const changes = req.body;
 
 
-  const athlete = await Athletes.findById(id)
-  if (await Athletes.findByName(changes.page_title, id)) {
-    res.status(400).json({ message: "A record with this name already exists." })
-  } else {
+  
     Athletes.update(changes, id)
       .then(updatedAthlete => {
-        log(req, athlete)
         res.json(updatedAthlete);
       })
       .catch(err => {
         res.status(500).json({ message: 'Failed to update athlete' });
       });
-  }
+  
 });
 
 
@@ -72,7 +67,6 @@ router.delete('/:id', authenticate.user_restricted, async (req, res) => {
 
   Athletes.remove(id)
     .then(deleted => {
-      log(req, athlete)
       res.send("Success.")
     })
     .catch(err => { res.status(500).json({ message: 'Failed to delete athlete' }) });
