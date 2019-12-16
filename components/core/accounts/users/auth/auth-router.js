@@ -214,7 +214,7 @@ router.put('/edit/info', authenticate.user_restricted, (req, res) => {
 
   UserKindDb.updateByUserId(infoData, id)
     .then(updateInfo => {
-      user.info = updateInfo
+      user.userInfo = updateInfo
       res.json(user);
     })
     .catch(err => {
