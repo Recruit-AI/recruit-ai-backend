@@ -4,6 +4,7 @@ module.exports = {
   find,
   findById,
   findByName,
+  findTeamMembers,
   add,
   update,
   remove,
@@ -33,6 +34,14 @@ function findByName(name, excludingId = null) {
     .where('team_name', name)
     .first()
   }
+}
+
+function findTeamMembers(id) {
+  return db('teams')
+  .join('end_users', 'teams.team_id', 'end_users.team_id')
+  .where( 'teams.team_id', id )
+  .andWhere( 'team_verified', true)
+  .select('user_display_name', 'foreign_user_id')
 }
 
 function add(team) {

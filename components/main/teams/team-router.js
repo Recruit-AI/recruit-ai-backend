@@ -33,6 +33,8 @@ router.get('/:id', async (req, res) => {
 
   const team = await Teams.findById(id)
   if (team) {
+    const teamMembers = await Teams.findTeamMembers(id)
+    team.teamMembers = teamMembers
     res.json(team)
   } else {
     res.status(404).json({ message: 'Could not find team with given id.' })
