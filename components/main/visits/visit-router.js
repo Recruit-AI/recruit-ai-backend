@@ -47,6 +47,13 @@ router.post('/', authenticate.user_restricted, async (req, res) => {
   
 });
 
+router.put('/confirm/:id/:choice', async(req, res) => {
+  let visit = await Visits.findById(req.params.id)
+  visit = await Visits.update({chosen_time: new Date(visit.time_options[req.params.choice])}, req.params.id)
+  res.json({visit, message: "Confirmed."})
+
+})
+
 router.put('/notes/:id', authenticate.user_restricted, async (req, res) => {
   const id = req.params.id
   const user = req.decodedToken.user
