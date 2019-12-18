@@ -65,7 +65,8 @@ router.put('/notes/:id', authenticate.team_restricted, async (req, res) => {
   const dateString = `${v[1]}/${v[2]} ${v[0]}, ${v[3]}:${v[4]}`
   let athlete = await Athletes.findById(id)
 
-  notes = athlete.notes + notes + `\n${user.userInfo.user_display_name}- ${dateString}\n\n\n`
+
+  notes = (athlete.notes ? athlete.notes : "") + notes + `\n${user.userInfo.user_display_name}- ${dateString}\n\n\n`
 
   athlete = await Athletes.update({ notes }, id)
 
