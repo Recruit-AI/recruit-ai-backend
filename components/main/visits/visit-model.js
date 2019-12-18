@@ -12,13 +12,20 @@ module.exports = {
 
 function find(id) {
   return db('visits')
-  .where('visit_personnel_id', id)
+    .leftJoin('teams', 'visits.visit_team_id', 'teams.team_id')
+    .leftJoin('end_users', 'visits.visit_personnel_id', 'end_users.foreign_user_id')
+    .leftJoin('athletes', 'visits.visit_team_id', 'athletes.athlete_id')
+    .where('visit_personnel_id', id)
+
 
 }
 
 function findById(id) {
   return db('visits')
-    .where( 'visit_id', id )
+    .leftJoin('teams', 'visits.visit_team_id', 'teams.team_id')
+    .leftJoin('end_users', 'visits.visit_personnel_id', 'end_users.foreign_user_id')
+    .leftJoin('athletes', 'visits.visit_team_id', 'athletes.athlete_id')
+    .where('visit_id', id)
     .first();
 }
 
@@ -44,6 +51,6 @@ function update(changes, id) {
 
 function remove(id) {
   return db('visits')
-    .where( 'visit_id', id )
+    .where('visit_id', id)
     .del();
 }
