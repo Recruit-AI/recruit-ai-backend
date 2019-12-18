@@ -1,7 +1,7 @@
 const verifyEmailTemplate = (link) => {
     return `<div style="width:100%;text-align:center,font-family:Gothic">
     <h2>Thank You For Registering</h2>
-    <h1>GrimWire</h1>
+    <h1>RecruitAI</h1>
     <h4>Please Click this Link To Continue Verification:</h4>
     
     <p><a href=${link}>Verify</a></p>

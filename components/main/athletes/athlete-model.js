@@ -10,12 +10,20 @@ module.exports = {
 
 
 
-function find(team_id, sort='preferred_name', sortOrder='ASC') {
-  return db('athletes')
+function find(team_id, personnel_id, sort, sortOrder, filter) {
+  let query = db('athletes')
   .leftJoin('teams', 'teams.team_id', 'athletes.team_id')
   .leftJoin('end_users', 'athletes.recruiting_personnel_id', 'end_users.foreign_user_id')
-  .where( 'athletes.team_id', team_id)
-  .orderBy(sort, sortOrder)
+
+  if(filter === 'personal') {
+    query = query.where( 'athletes.recruiting_personnel_id', personnel_id)
+  } else if (filter === 'team') {
+    query = query.where( 'athletes.team_id', team_id)
+  }
+
+  query = query.orderBy(sort, sortOrder)
+
+  return query
 
 }
 

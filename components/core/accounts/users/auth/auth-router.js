@@ -3,6 +3,8 @@ const router = express.Router();
 const Users = require('../user-model.js');
 const IpAuth = require('./ip-auth-model.js')
 
+require('dotenv').config()
+
 //Used for password authentication & passing back the json web token
 const bcrypt = require('bcryptjs') //hashing the password
 const owasp = require('../../../../../config/passwordConfig') //setting minimum restrictions on passwords
@@ -104,7 +106,7 @@ router.get("/verify/:user_id/:user_hash", async (req, res) => {
 router.get("/forgottenPassword/:usernameEmail", async (req, res) => {
   const { usernameEmail } = req.params
 
-  const user = await resetPassword(usernameEmail)
+  let user = await resetPassword(usernameEmail)
 
   forgotPasswordEmail(user)
 
@@ -331,13 +333,14 @@ function forgotPasswordEmail(user) {
 }
 
 const sendEmail = (user, subject, text, html) => {
+  console.log(process.env.EMAIL_PASSWORD)
   let transporter = nodeMailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
     secure: true,
     auth: {
-      user: 'grimwirecontact@gmail.com',
-      pass: 'Gr!mw!re'
+      user: 'contactrecruitai@gmail.com',
+      pass: `${process.env.EMAIL_PASSWORD}`
     }
   });
   let mailOptions = {
@@ -347,7 +350,7 @@ const sendEmail = (user, subject, text, html) => {
     html: html
   };
 
-  transporter.sendMail(mailOptions, (error, info) => { return error ? false : true });
+  transporter.sendMail(mailOptions, (error, info) => { return error ? console.log(error) : true });
 
 }
 
@@ -362,7 +365,7 @@ function checkRegistrationHash(user, user_hash) {
 }
 
 function forgotPasswordHash(user) {
-  return bcrypt.hashSync(user.username + reset_time, 2)
+  return bcrypt.hashSync(user.username + user.forgotten_password_reset_time, 2)
 }
 
 function checkForgotPasswordHash(user, user_hash) {
@@ -371,7 +374,7 @@ function checkForgotPasswordHash(user, user_hash) {
 
 //Quick helper function to grab the current time and set it as the reset time.
 async function resetPassword(usernameEmail) {
-  const user = await Users.findUser(usernameEmail)
+  let user = await Users.findUser(usernameEmail)
 
   const reset_time = Date.now()
 

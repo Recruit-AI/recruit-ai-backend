@@ -6,14 +6,16 @@ const Visits = require('./visit-model.js');
 const { log } = require('../../core/administration/userLogs/log-middleware.js')
 const authenticate = require('../../core/accounts/restricted-middleware.js')
 
-//Change status
-//Set time options
-//Confirm time- send email
-
-router.get('/', authenticate.user_restricted, (req, res) => {
+router.get('/', authenticate.team_restricted, (req, res) => {
   const user = req.decodedToken.user
+  const user_id = req.decodedToken.user.user_id
+  const team_id = req.decodedToken.verified_team_id
 
-  Visits.find(user.user_id)
+  const status = req.query.status || 'all'
+  const filter = req.query.filter || 'team'
+
+
+  Visits.find(team_id, user_id, status, filter)
     .then(visits => {
       res.json(visits)
     })
@@ -22,7 +24,8 @@ router.get('/', authenticate.user_restricted, (req, res) => {
     });
 })
 
-router.get('/:id', async (req, res) => {
+//The private route to see all the details
+router.get('/:id', authenticate.team_restricted, async (req, res) => {
   const { id } = req.params;
 
   const visit = await Visits.findById(id)
@@ -34,9 +37,22 @@ router.get('/:id', async (req, res) => {
 
 });
 
-router.post('/', authenticate.user_restricted, async (req, res) => {
+//The public route to get the general info for the athlete to see
+router.get('/public/:id', async (req, res) => {
+  const { id } = req.params;
+
+  const visit = await Visits.findPublicById(id)
+  if (visit) {
+    res.json(visit)
+  } else {
+    res.status(404).json({ message: 'Could not find visit with given id.' })
+  }
+
+});
+
+router.post('/', authenticate.team_restricted, async (req, res) => {
   const visitData = req.body;
-  
+  visitData.visit_status = 'pending'
     Visits.add(visitData)
       .then(visit => {
         res.status(201).json(visit);
@@ -47,38 +63,31 @@ router.post('/', authenticate.user_restricted, async (req, res) => {
   
 });
 
-router.put('/confirm/:id/:choice', async(req, res) => {
+router.put('/choose/:id/:choice', async(req, res) => {
   let visit = await Visits.findById(req.params.id)
-  visit = await Visits.update({chosen_time: new Date(visit.time_options[req.params.choice])}, req.params.id)
+  visit = await Visits.update({visit_status: "chosen", chosen_time: new Date(visit.time_options[req.params.choice])}, req.params.id)
   res.json({visit, message: "Confirmed."})
-
 })
 
-router.put('/notes/:id', authenticate.user_restricted, async (req, res) => {
-  const id = req.params.id
-  const user = req.decodedToken.user
-  let notes = req.body.notes
-
-  date = new Date(Date.now()),
-  v = [
-    date.getFullYear(),
-    date.getMonth()+1,
-    date.getDate(),
-    date.getHours(),
-    date.getMinutes(),
-  ];
-  const dateString = `${v[1]}/${v[2]} ${v[0]}, ${v[3]}:${v[4]}`
-  let visit = await Visits.findById(id)
-
-  notes = visit.notes + notes + `\n${user.userInfo.user_display_name}- ${dateString}\n\n\n`
-
-  visit = await Visits.update({notes}, id)
-
-  res.json(visit)
-
+router.put('/confirm/:id', authenticate.team_restricted, async(req, res) => {
+  let visit = await Visits.findById(req.params.id)
+  visit = await Visits.update({visit_status: "confirmed"}, req.params.id)
+  res.json({visit, message: "Confirmed."})
 })
 
-router.put('/:id', authenticate.user_restricted, async (req, res) => {
+router.put('/completed/:id', authenticate.team_restricted, async(req, res) => {
+  let visit = await Visits.findById(req.params.id)
+  visit = await Visits.update({visit_status: "completed"}, req.params.id)
+  res.json({visit, message: "Confirmed."})
+})
+
+router.put('/missed/:id', authenticate.team_restricted, async(req, res) => {
+  let visit = await Visits.findById(req.params.id)
+  visit = await Visits.update({visit_status: "missed"}, req.params.id)
+  res.json({visit, message: "Confirmed."})
+})
+
+router.put('/:id', authenticate.team_restricted, async (req, res) => {
   const { id } = req.params;
   const changes = req.body;
 
@@ -95,7 +104,7 @@ router.put('/:id', authenticate.user_restricted, async (req, res) => {
 });
 
 
-router.delete('/:id', authenticate.user_restricted, async (req, res) => {
+router.delete('/:id', authenticate.team_restricted, async (req, res) => {
   const { id } = req.params;
 
   const visit = await Visits.findById(id)

@@ -19,7 +19,7 @@ router.get('/', (req, res) => {
 })
 
 //An existing team looking at the requests
-router.get('/join-requests', authenticate.user_restricted, async(req, res) => {
+router.get('/join-requests', authenticate.team_owner_restricted, async(req, res) => {
   const user = req.decodedToken.user
 
   const UserKindDb = userKindsInfo(user.user_kind)
@@ -80,7 +80,7 @@ router.get('/join/:id', authenticate.user_restricted, async(req, res) => {
 
 
 //An existing team accepting a request
-router.get('/verify/:user_id', authenticate.user_restricted, async(req, res) => {
+router.get('/verify/:user_id', authenticate.team_owner_restricted, async(req, res) => {
   const user = req.decodedToken.user
   let infoData = {}
   infoData.team_id = user.userInfo.team_id
@@ -91,7 +91,7 @@ router.get('/verify/:user_id', authenticate.user_restricted, async(req, res) => 
 })
 
 //An existing team denying a request
-router.get('/decline/:user_id', authenticate.user_restricted, async(req, res) => {
+router.get('/decline/:user_id', authenticate.team_owner_restricted, async(req, res) => {
   const user = req.decodedToken.user
   let infoData = {}
   infoData.team_verified = null
@@ -102,7 +102,7 @@ router.get('/decline/:user_id', authenticate.user_restricted, async(req, res) =>
 
 })
 
-router.put('/:id', authenticate.user_restricted, async (req, res) => {
+router.put('/:id', authenticate.team_owner_restricted, async (req, res) => {
   const { id } = req.params;
   const changes = req.body;
 
@@ -122,7 +122,7 @@ router.put('/:id', authenticate.user_restricted, async (req, res) => {
 });
 
 
-router.delete('/:id', authenticate.user_restricted, async (req, res) => {
+router.delete('/:id', authenticate.team_owner_restricted, async (req, res) => {
   const { id } = req.params;
 
   const team = await Teams.findById(id)
