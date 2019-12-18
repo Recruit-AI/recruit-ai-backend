@@ -17,6 +17,12 @@ server.use('/api/teams', TeamRouter)
 const AthleteRouter = require('../components/main/athletes/athlete-router')
 server.use('/api/athletes', AthleteRouter)
 
+const VisitRouter = require('../components/main/visits/visit-router')
+server.use('/api/visits', VisitRouter)
+
+const AlertRouter = require('../components/main/alerts/alert-router')
+server.use('/api/alerts', AlertRouter)
+
 server.get('/', (req, res) => {
   res.send("Your API is successfully connected");
 })

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const Athletes = require('./athlete-model.js');
+const Alerts = require('./alert-model.js');
 
 const { log } = require('../../core/administration/userLogs/log-middleware.js')
 const authenticate = require('../../core/accounts/restricted-middleware.js')
@@ -9,39 +9,36 @@ const authenticate = require('../../core/accounts/restricted-middleware.js')
 router.get('/', authenticate.user_restricted, (req, res) => {
   const user = req.decodedToken.user
 
-  const sort = req.query.sort || 'preferred_name'
-  const order = req.query.order || 'asc'
-
-  Athletes.find(user.userInfo.team_id, sort, order)
-    .then(athletes => {
-      res.json(athletes)
+  Alerts.find(user.user_id)
+    .then(alerts => {
+      res.json(alerts)
     })
     .catch(err => {
-      res.status(500).json({ message: 'Failed to get athletes' });
+      res.status(500).json({ message: 'Failed to get alerts' });
     });
 })
 
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
 
-  const athlete = await Athletes.findById(id)
-  if (athlete) {
-    res.json(athlete)
+  const alert = await Alerts.findById(id)
+  if (alert) {
+    res.json(alert)
   } else {
-    res.status(404).json({ message: 'Could not find athlete with given id.' })
+    res.status(404).json({ message: 'Could not find alert with given id.' })
   }
 
 });
 
 router.post('/', authenticate.user_restricted, async (req, res) => {
-  const athleteData = req.body;
+  const alertData = req.body;
   
-    Athletes.add(athleteData)
-      .then(athlete => {
-        res.status(201).json(athlete);
+    Alerts.add(alertData)
+      .then(alert => {
+        res.status(201).json(alert);
       })
       .catch(err => {
-        res.status(500).json({ message: 'Failed to create new athlete', err: athleteData });
+        res.status(500).json({ message: 'Failed to create new alert', err: alertData });
       });
   
 });
@@ -60,13 +57,13 @@ router.put('/notes/:id', authenticate.user_restricted, async (req, res) => {
     date.getMinutes(),
   ];
   const dateString = `${v[1]}/${v[2]} ${v[0]}, ${v[3]}:${v[4]}`
-  let athlete = await Athletes.findById(id)
+  let alert = await Alerts.findById(id)
 
-  notes = athlete.notes + notes + `\n${user.userInfo.user_display_name}- ${dateString}\n\n\n`
+  notes = alert.notes + notes + `\n${user.userInfo.user_display_name}- ${dateString}\n\n\n`
 
-  athlete = await Athletes.update({notes}, id)
+  alert = await Alerts.update({notes}, id)
 
-  res.json(athlete)
+  res.json(alert)
 
 })
 
@@ -76,12 +73,12 @@ router.put('/:id', authenticate.user_restricted, async (req, res) => {
 
 
   
-    Athletes.update(changes, id)
-      .then(updatedAthlete => {
-        res.json(updatedAthlete);
+    Alerts.update(changes, id)
+      .then(updatedAlert => {
+        res.json(updatedAlert);
       })
       .catch(err => {
-        res.status(500).json({ message: 'Failed to update athlete' });
+        res.status(500).json({ message: 'Failed to update alert' });
       });
   
 });
@@ -90,13 +87,13 @@ router.put('/:id', authenticate.user_restricted, async (req, res) => {
 router.delete('/:id', authenticate.user_restricted, async (req, res) => {
   const { id } = req.params;
 
-  const athlete = await Athletes.findById(id)
+  const alert = await Alerts.findById(id)
 
-  Athletes.remove(id)
+  Alerts.remove(id)
     .then(deleted => {
       res.send("Success.")
     })
-    .catch(err => { res.status(500).json({ message: 'Failed to delete athlete' }) });
+    .catch(err => { res.status(500).json({ message: 'Failed to delete alert' }) });
 
 });
 

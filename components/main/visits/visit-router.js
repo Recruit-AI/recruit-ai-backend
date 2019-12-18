@@ -1,47 +1,48 @@
 const express = require('express');
 const router = express.Router();
 
-const Athletes = require('./athlete-model.js');
+const Visits = require('./visit-model.js');
 
 const { log } = require('../../core/administration/userLogs/log-middleware.js')
 const authenticate = require('../../core/accounts/restricted-middleware.js')
 
+//Change status
+//Set time options
+//Confirm time- send email
+
 router.get('/', authenticate.user_restricted, (req, res) => {
   const user = req.decodedToken.user
 
-  const sort = req.query.sort || 'preferred_name'
-  const order = req.query.order || 'asc'
-
-  Athletes.find(user.userInfo.team_id, sort, order)
-    .then(athletes => {
-      res.json(athletes)
+  Visits.find(user.user_id)
+    .then(visits => {
+      res.json(visits)
     })
     .catch(err => {
-      res.status(500).json({ message: 'Failed to get athletes' });
+      res.status(500).json({ message: 'Failed to get visits' });
     });
 })
 
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
 
-  const athlete = await Athletes.findById(id)
-  if (athlete) {
-    res.json(athlete)
+  const visit = await Visits.findById(id)
+  if (visit) {
+    res.json(visit)
   } else {
-    res.status(404).json({ message: 'Could not find athlete with given id.' })
+    res.status(404).json({ message: 'Could not find visit with given id.' })
   }
 
 });
 
 router.post('/', authenticate.user_restricted, async (req, res) => {
-  const athleteData = req.body;
+  const visitData = req.body;
   
-    Athletes.add(athleteData)
-      .then(athlete => {
-        res.status(201).json(athlete);
+    Visits.add(visitData)
+      .then(visit => {
+        res.status(201).json(visit);
       })
       .catch(err => {
-        res.status(500).json({ message: 'Failed to create new athlete', err: athleteData });
+        res.status(500).json({ message: 'Failed to create new visit', err: visitData });
       });
   
 });
@@ -60,13 +61,13 @@ router.put('/notes/:id', authenticate.user_restricted, async (req, res) => {
     date.getMinutes(),
   ];
   const dateString = `${v[1]}/${v[2]} ${v[0]}, ${v[3]}:${v[4]}`
-  let athlete = await Athletes.findById(id)
+  let visit = await Visits.findById(id)
 
-  notes = athlete.notes + notes + `\n${user.userInfo.user_display_name}- ${dateString}\n\n\n`
+  notes = visit.notes + notes + `\n${user.userInfo.user_display_name}- ${dateString}\n\n\n`
 
-  athlete = await Athletes.update({notes}, id)
+  visit = await Visits.update({notes}, id)
 
-  res.json(athlete)
+  res.json(visit)
 
 })
 
@@ -76,12 +77,12 @@ router.put('/:id', authenticate.user_restricted, async (req, res) => {
 
 
   
-    Athletes.update(changes, id)
-      .then(updatedAthlete => {
-        res.json(updatedAthlete);
+    Visits.update(changes, id)
+      .then(updatedVisit => {
+        res.json(updatedVisit);
       })
       .catch(err => {
-        res.status(500).json({ message: 'Failed to update athlete' });
+        res.status(500).json({ message: 'Failed to update visit' });
       });
   
 });
@@ -90,13 +91,13 @@ router.put('/:id', authenticate.user_restricted, async (req, res) => {
 router.delete('/:id', authenticate.user_restricted, async (req, res) => {
   const { id } = req.params;
 
-  const athlete = await Athletes.findById(id)
+  const visit = await Visits.findById(id)
 
-  Athletes.remove(id)
+  Visits.remove(id)
     .then(deleted => {
       res.send("Success.")
     })
-    .catch(err => { res.status(500).json({ message: 'Failed to delete athlete' }) });
+    .catch(err => { res.status(500).json({ message: 'Failed to delete visit' }) });
 
 });
 

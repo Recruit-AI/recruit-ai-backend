@@ -8,7 +8,8 @@ const { log } = require('../../core/administration/userLogs/log-middleware.js')
 const authenticate = require('../../core/accounts/restricted-middleware.js')
 
 router.get('/', (req, res) => {
-  Teams.find()
+  const search = req.query.search || ""
+  Teams.find(search)
     .then(teams => {
       res.json(teams)
     })
@@ -57,8 +58,9 @@ router.post('/', authenticate.user_restricted, async (req, res) => {
 
     const UserKindDb = userKindsInfo(user.user_kind)
     UserKindDb.updateByUserId(infoData, user.user_id)
+    user.userInfo = {...user.userInfo, team_id: team.team_id, team_verified: true}
 
-    res.status(201).json(team);
+    res.status(201).json({team, user});
   }
 });
 
@@ -70,8 +72,10 @@ router.get('/join/:id', authenticate.user_restricted, async(req, res) => {
   infoData.team_verified = false
   const UserKindDb = userKindsInfo(user.user_kind)
   UserKindDb.updateByUserId(infoData, user.user_id)
+  user.userInfo = {...user.userInfo, team_id: req.params.id, team_verified: false}
 
-  res.json({message: "Request sent. Please await verification from the owner of that team."})
+
+  res.json({message: "Request sent. Please await verification from the owner of that team.", user })
 })
 
 

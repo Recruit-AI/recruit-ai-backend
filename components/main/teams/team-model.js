@@ -12,8 +12,8 @@ module.exports = {
 
 
 
-function find() {
-  return db('teams')
+function find(search) {
+  return db('teams').where('team_name', 'iLIKE', `%${search}%`)
 
 }
 
