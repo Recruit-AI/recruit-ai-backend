@@ -15,7 +15,7 @@ function find(team_id, personnel_id, status, filter) {
   let query = db('visits')
     .leftJoin('teams', 'visits.visit_team_id', 'teams.team_id')
     .leftJoin('end_users', 'visits.visit_personnel_id', 'end_users.foreign_user_id')
-    .leftJoin('athletes', 'visits.visit_team_id', 'athletes.athlete_id')
+    .leftJoin('athletes', 'visits.visit_athlete_id', 'athletes.athlete_id')
 
 
     if(filter === 'personal') {
@@ -45,7 +45,7 @@ function findPublicById(id) {
   return db('visits')
     .leftJoin('teams', 'visits.visit_team_id', 'teams.team_id')
     .leftJoin('end_users', 'visits.visit_personnel_id', 'end_users.foreign_user_id')
-    .leftJoin('athletes', 'visits.visit_team_id', 'athletes.athlete_id')
+    .leftJoin('athletes', 'visits.visit_athlete_id', 'athletes.athlete_id')
     .where('visit_id', id)
     .select(
       'visit_id',
