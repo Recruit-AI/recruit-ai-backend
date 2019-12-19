@@ -3,6 +3,7 @@ const db = require('../../../data/dbConfig.js');
 module.exports = {
   find,
   findById,
+  findVisitsByAthleteId,
   add,
   update,
   remove,
@@ -32,6 +33,11 @@ function findById(id) {
     .leftJoin('end_users', 'athletes.recruiting_personnel_id', 'end_users.foreign_user_id')
     .where( 'athlete_id', id )
     .first();
+}
+
+function findVisitsByAthleteId(id) {
+  return db('visits')
+  .where( 'visit_athlete_id', id)
 }
 
 

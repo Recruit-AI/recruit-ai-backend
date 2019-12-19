@@ -27,6 +27,8 @@ router.get('/:id', authenticate.team_restricted, async (req, res) => {
   const { id } = req.params;
 
   const athlete = await Athletes.findById(id)
+  const visits = await Athletes.findVisitsByAthleteId(id)
+  athlete.visits = visits
 
   if (athlete && authenticate.check_team(req, athlete.team_id)) {
     res.json(athlete)
