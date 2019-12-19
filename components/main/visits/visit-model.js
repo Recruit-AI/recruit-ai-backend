@@ -52,6 +52,7 @@ function findPublicById(id) {
       'visit_athlete_id',
       'visit_personnel_id',
       'visit_team_id',
+      'visit_status',
       'time_options',
       'chosen_time',
       'user_display_name',
