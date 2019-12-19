@@ -36,7 +36,7 @@ function findById(id) {
   return db('visits')
     .leftJoin('teams', 'visits.visit_team_id', 'teams.team_id')
     .leftJoin('end_users', 'visits.visit_personnel_id', 'end_users.foreign_user_id')
-    .leftJoin('athletes', 'visits.visit_team_id', 'athletes.athlete_id')
+    .leftJoin('athletes', 'visits.visit_athlete_id', 'athletes.athlete_id')
     .where('visit_id', id)
     .first();
 }
