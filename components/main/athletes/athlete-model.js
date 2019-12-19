@@ -29,6 +29,7 @@ function find(team_id, personnel_id, sort, sortOrder, filter) {
 
 function findById(id) {
   return db('athletes')
+    .leftJoin('end_users', 'athletes.recruiting_personnel_id', 'end_users.foreign_user_id')
     .where( 'athlete_id', id )
     .first();
 }
