@@ -13,8 +13,8 @@ exports.up = function (knex, Promise) {
             tbl.integer('team_id')
                 .unsigned()
                 .notNullable()
-                .references('user_id')
-                .inTable('users')
+                .references('team_id')
+                .inTable('teams')
                 .onUpdate('CASCADE')
                 .onDelete('CASCADE');
             tbl.text('notes');

@@ -17,8 +17,8 @@ exports.up = function (knex, Promise) {
             tbl.integer('alert_personnel_id')
                 .unsigned()
                 .notNullable()
-                .references('team_id')
-                .inTable('teams')
+                .references('user_id')
+                .inTable('users')
                 .onUpdate('CASCADE')
                 .onDelete('CASCADE');
 

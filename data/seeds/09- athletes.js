@@ -23,7 +23,7 @@ exports.seed = function (knex) {
       "first_name": "Robert",
       "last_name": "Something",
       "email": "asdf@asdf.com",
-      "phone": "23167896305",
+      "phone": "2163167326",
       "city": "Cityopolis",
       "state": "ST",
       "high_school_name": "The High School",
