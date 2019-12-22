@@ -6,7 +6,12 @@ const cors = require('cors');
 server.use(cors());
 
 server.use(express.json());
+
+
 var twilio = require('twilio');
+const bodyParser = require('body-parser');
+
+
 
 //A lot functionality for the core of the webapp, including users, logs, feedback, pages, and blog posts.
 const coreRoutes = require('./core.js')
@@ -47,6 +52,7 @@ const MessagingResponse = twilio.twiml.MessagingResponse;
 
 server.post('/sms', (req, res) => {
 
+  server.use(bodyParser.urlencoded({ extended: false }));
 
   const twiml = new MessagingResponse();
 
