@@ -12,6 +12,10 @@ var twilio = require('twilio');
 const bodyParser = require('body-parser');
 
 
+const MessagingResponse = twilio.twiml.MessagingResponse;
+server.use(bodyParser.urlencoded({ extended: false }));
+
+
 
 //A lot functionality for the core of the webapp, including users, logs, feedback, pages, and blog posts.
 const coreRoutes = require('./core.js')
@@ -48,11 +52,7 @@ server.get('/test-message', (req, res) => {
   .catch((err) => console.log(err))
 })
 
-const MessagingResponse = twilio.twiml.MessagingResponse;
-
 server.post('/sms', (req, res) => {
-
-  server.use(bodyParser.urlencoded({ extended: false }));
 
   const twiml = new MessagingResponse();
 
