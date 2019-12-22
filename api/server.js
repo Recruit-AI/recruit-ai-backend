@@ -43,21 +43,11 @@ server.get('/test-message', (req, res) => {
   .catch((err) => console.log(err))
 })
 
-const session = require('express-session');
 const MessagingResponse = twilio.twiml.MessagingResponse;
 
-server.use(session({secret: 'anything-you-want-but-keep-secret'}));
-
 server.post('/sms', (req, res) => {
-  const smsCount = req.session.counter || 0;
 
   let message = 'Hello, thanks for the new message.';
-
-  if(smsCount > 0) {
-    message = 'Hello, thanks for message number ' + (smsCount + 1);
-  }
-
-  req.session.counter = smsCount + 1;
 
   const twiml = new MessagingResponse();
   twiml.message(message);
