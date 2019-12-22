@@ -56,15 +56,15 @@ server.post('/sms', (req, res) => {
 
   const twiml = new MessagingResponse();
 
-  console.log(req.body, req.body.Body)
+  console.log(req.body.From, req.body.Body)
 
-  if (req.body.Body == 'hello') {
-    twiml.message('Hi!');
-  } else if (req.body.Body == 'bye') {
-    twiml.message('Goodbye');
+  if (req.body.Body.toLowerCase() == 'hello') {
+    twiml.message('Hi! Your number is ' + req.body.From);
+  } else if (req.body.Body.toLowerCase() == 'bye') {
+    twiml.message('Goodbye' + req.body.From + "!");
   } else {
     twiml.message(
-      'No Body param match, Twilio sends this in the request to your server.'
+      "We're sorry, but we don't understand that command."
     );
   }
 
