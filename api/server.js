@@ -56,6 +56,8 @@ server.post('/sms', (req, res) => {
 
   const twiml = new MessagingResponse();
 
+  console.log(req.body, req.body.Body)
+
   if (req.body.Body == 'hello') {
     twiml.message('Hi!');
   } else if (req.body.Body == 'bye') {
