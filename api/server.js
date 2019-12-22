@@ -58,13 +58,18 @@ server.post('/sms', (req, res) => {
 
   console.log(req.body.From, req.body.Body)
 
-  if (req.body.Body.toLowerCase() == 'hello') {
+  //Use cases- text "help" to get a list of these options
+  //Text "visit" to get the status on the visit- it either sends the date/information, or the choose link again
+  //Text "recruiter" to get the information of your recruiter
+
+  //Anything else should be a general text in to coaches.
+  if (req.body.Body.toLowerCase() == 'help') {
     twiml.message('Hi! Your number is ' + req.body.From);
-  } else if (req.body.Body.toLowerCase() == 'bye') {
+  } else if (req.body.Body.toLowerCase() == 'visit') {
     twiml.message('Goodbye' + req.body.From + "!");
   } else {
     twiml.message(
-      "We're sorry, but we don't understand that command."
+      "We'll pass that message along."
     );
   }
 
