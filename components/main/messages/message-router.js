@@ -96,7 +96,7 @@ router.get('/', authenticate.team_restricted, (req, res) => {
   const filter = req.query.filter || 'team'
 
 
-  Messages.find(team_id, user_id, status, filter)
+  Messages.find(team_id, user_id, filter)
     .then(messages => {
       res.json(messages)
     })
