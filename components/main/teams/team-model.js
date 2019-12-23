@@ -13,35 +13,39 @@ module.exports = {
 
 
 function find(search) {
-  return db('teams').where('team_name', 'iLIKE', `%${search}%`)
+  if (search != '') {
+    return []
+  } else {
+    return db('teams').where('team_name', 'iLIKE', `%${search}%`)
+  }
 
 }
 
 function findById(id) {
   return db('teams')
-    .where( 'team_id', id )
+    .where('team_id', id)
     .first();
 }
 
 function findByName(name, excludingId = null) {
-  if(excludingId) {
+  if (excludingId) {
     return db('teams')
-    .where('team_name', name)
-    .whereNot('team_id', excludingId)
-    .first()
+      .where('team_name', name)
+      .whereNot('team_id', excludingId)
+      .first()
   } else {
     return db('teams')
-    .where('team_name', name)
-    .first()
+      .where('team_name', name)
+      .first()
   }
 }
 
 function findTeamMembers(id) {
   return db('teams')
-  .join('end_users', 'teams.team_id', 'end_users.team_id')
-  .where( 'teams.team_id', id )
-  .andWhere( 'team_verified', true)
-  .select('user_display_name', 'foreign_user_id')
+    .join('end_users', 'teams.team_id', 'end_users.team_id')
+    .where('teams.team_id', id)
+    .andWhere('team_verified', true)
+    .select('user_display_name', 'foreign_user_id')
 }
 
 function add(team) {
@@ -65,6 +69,6 @@ function update(changes, id) {
 
 function remove(id) {
   return db('teams')
-    .where( 'team_id', id )
+    .where('team_id', id)
     .del();
 }
