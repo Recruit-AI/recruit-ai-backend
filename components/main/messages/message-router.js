@@ -14,7 +14,7 @@ const twilioPhoneNumber = "+14155346398"
 
 //Used to send from a coach to an athlete 
 router.post('/send/:athlete_id', authenticate.team_restricted, async (req, res) => {
-  const message_text = req.body.message
+  const message_text = req.body.message_text
   const message_athlete_id = req.params.athlete_id
   const message_personnel_id = req.decodedToken.user.user_id
   const message_team_id = req.decodedToken.verified_team_id

@@ -15,24 +15,24 @@ function find(team_id, personnel_id, filter) {
   let query = db('athletes')
     .leftJoin('teams', 'athletes.team_id', 'teams.team_id')
     .leftJoin('end_users', 'athletes.recruiting_personnel_id', 'end_users.foreign_user_id')
-    
 
-    if(filter === 'personal') {
-      query = query.where( 'athletes.recruiting_personnel_id', personnel_id)
-    } else if (filter === 'team') {
-      query = query.where( 'athletes.athlete_team_id', team_id)
-    }
-    
+
+  if (filter === 'personal') {
+    query = query.where('athletes.recruiting_personnel_id', personnel_id)
+  } else if (filter === 'team') {
+    query = query.where('athletes.athlete_team_id', team_id)
+  }
+
   return query
 }
 
 function findById(id) {
   return db('messages')
-  .where('message_id', id)
-  .leftJoin('teams', 'messages.message_team_id', 'teams.team_id')
-  .leftJoin('end_users', 'messages.message_personnel_id', 'end_users.foreign_user_id')
-  .leftJoin('athletes', 'messages.message_athlete_id', 'athletes.athlete_id')
-  .first();
+    .where('message_id', id)
+    .leftJoin('teams', 'messages.message_team_id', 'teams.team_id')
+    .leftJoin('end_users', 'messages.message_personnel_id', 'end_users.foreign_user_id')
+    .leftJoin('athletes', 'messages.message_athlete_id', 'athletes.athlete_id')
+    .first();
 }
 
 function findByAthleteId(id) {
@@ -45,8 +45,8 @@ function findByAthleteId(id) {
 
 function findAthleteByNumber(number) {
   return db('athletes')
-  .where('phone', number.substring(2, number.length))
-  .first()
+    .where('phone', number.substring(2, number.length))
+    .first()
 }
 
 function add(message) {
