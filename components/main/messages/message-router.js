@@ -106,11 +106,13 @@ router.get('/', authenticate.team_restricted, (req, res) => {
 //This should return all of the messages for a particular athlete
 router.get('/:athlete_id', authenticate.team_restricted, async (req, res) => {
   const { athlete_id } = req.params;
+  const user_id = req.decodedToken.user.user_id
+  const team_id = req.decodedToken.verified_team_id
 
   
   const filter = req.query.filter || 'team'
 
-  const message = await Messages.findByAthleteId(athlete_id, filter)
+  const message = await Messages.findByAthleteId(athlete_id, user_id, team_id, filter)
   if (message) {
     res.json(message)
   } else {

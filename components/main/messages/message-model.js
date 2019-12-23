@@ -35,12 +35,12 @@ function findById(id) {
     .first();
 }
 
-function findByAthleteId(id, filter) {
+function findByAthleteId(id, personnel_id, team_id, filter) {
   let query = db('messages')
     .leftJoin('teams', 'messages.message_team_id', 'teams.team_id')
     .leftJoin('end_users', 'messages.message_personnel_id', 'end_users.foreign_user_id')
     .leftJoin('athletes', 'messages.message_athlete_id', 'athletes.athlete_id')
-    .where('message_athlete_id', id).orderBy('created_at', 'desc')
+    .where('message_athlete_id', id)
     
     if (filter === 'personal') {
       query = query.where('messages.message_personnel_id', personnel_id)
@@ -48,7 +48,7 @@ function findByAthleteId(id, filter) {
       query = query.where('messages.message_team_id', team_id)
     }
 
-    return query
+    return query.orderBy('created_at', 'desc')
 }
 
 function findAthleteByNumber(number) {
