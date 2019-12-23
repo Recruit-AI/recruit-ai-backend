@@ -20,7 +20,7 @@ function find(team_id, personnel_id, filter) {
   if (filter === 'personal') {
     query = query.where('athletes.recruiting_personnel_id', personnel_id)
   } else {
-    query = query.where('athletes.athlete_team_id', team_id)
+    query = query.where('athletes.team_id', team_id)
   }
 
   return query
