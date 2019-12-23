@@ -13,8 +13,8 @@ module.exports = {
 
 
 function find(search) {
-  if (search != '') {
-    return []
+  if (search === '') {
+    return db('teams').where('team_name', search)
   } else {
     return db('teams').where('team_name', 'iLIKE', `%${search}%`)
   }
