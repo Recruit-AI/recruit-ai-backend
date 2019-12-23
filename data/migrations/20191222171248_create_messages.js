@@ -5,6 +5,7 @@ exports.up = function (knex, Promise) {
             tbl.increments('message_id');
             tbl.text('message_type');
             tbl.text('message_text');
+            tbl.timestamps(false, true)
 
             tbl.integer('message_athlete_id')
                 .unsigned()

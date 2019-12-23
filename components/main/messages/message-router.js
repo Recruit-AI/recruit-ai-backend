@@ -13,15 +13,25 @@ router.use(bodyParser.urlencoded({ extended: false }));
 const twilioPhoneNumber = "+14155346398"
 
 //Used to send from a coach to an athlete 
-router.get('/send-message', (req, res) => {
+router.post('/send/:athlete_id', authenticate.team_restricted, async (req, res) => {
+  const message_text = req.body.message
+  const message_athlete_id = req.params.athlete_id
+  const message_personnel_id = req.decodedToken.user.user_id
+  const message_team_id = req.decodedToken.verified_team_id
+  const message_type = "outgoing"
+
+  const messageData = { message_text, message_team_id, message_athlete_id, message_personnel_id, message_type }
+
+  const message = await Messages.add(messageData)
+
   var client = new twilio(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
 
   client.messages.create({
-    body: 'Message From The Team',
-    to: '+12163167326',  // Text this number
-    from: twilioPhoneNumber // From a valid Twilio number
+    body: message_text + " -" + message.user_display_name, //The message with the coach's name appended 
+    to: '+1' + message.phone,  //The athletes number
+    from: twilioPhoneNumber //Our twilio phone #
   })
-    .then((message) => console.log(message.sid))
+    .then((m) => res.json(message))
     .catch((err) => console.log(err))
 })
 
@@ -96,10 +106,10 @@ router.get('/', authenticate.team_restricted, (req, res) => {
 })
 
 //This should return all of the messages for a particular athlete
-router.get('/:id', authenticate.team_restricted, async (req, res) => {
-  const { id } = req.params;
+router.get('/:athlete_id', authenticate.team_restricted, async (req, res) => {
+  const { athlete_id } = req.params;
 
-  const message = await Messages.findById(id)
+  const message = await Messages.findByAthleteId(athlete_id)
   if (message) {
     res.json(message)
   } else {
