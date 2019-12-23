@@ -88,11 +88,9 @@ router.post('/sms', async (req, res) => {
 
 //Should return a list of users that has messages with them.
 router.get('/', authenticate.team_restricted, (req, res) => {
-  const user = req.decodedToken.user
   const user_id = req.decodedToken.user.user_id
   const team_id = req.decodedToken.verified_team_id
 
-  const status = req.query.status || 'all'
   const filter = req.query.filter || 'team'
 
 
@@ -109,7 +107,10 @@ router.get('/', authenticate.team_restricted, (req, res) => {
 router.get('/:athlete_id', authenticate.team_restricted, async (req, res) => {
   const { athlete_id } = req.params;
 
-  const message = await Messages.findByAthleteId(athlete_id)
+  
+  const filter = req.query.filter || 'team'
+
+  const message = await Messages.findByAthleteId(athlete_id, filter)
   if (message) {
     res.json(message)
   } else {
