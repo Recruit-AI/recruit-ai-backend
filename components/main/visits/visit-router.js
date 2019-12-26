@@ -2,9 +2,20 @@ const express = require('express');
 const router = express.Router();
 
 const Visits = require('./visit-model.js');
+const Alerts = require('../alerts/alert-model.js');
+const Athletes = require('../athletes/athlete-model.js');
 
 const { log } = require('../../core/administration/userLogs/log-middleware.js')
 const authenticate = require('../../core/accounts/restricted-middleware.js')
+
+
+var twilio = require('twilio');
+const bodyParser = require('body-parser');
+const MessagingResponse = twilio.twiml.MessagingResponse;
+router.use(bodyParser.urlencoded({ extended: false }));
+const { sendMessage } = require('../messages/message-helper')
+
+
 
 router.get('/', authenticate.team_restricted, (req, res) => {
   const user = req.decodedToken.user
@@ -53,38 +64,62 @@ router.get('/public/:id', async (req, res) => {
 router.post('/', authenticate.team_restricted, async (req, res) => {
   const visitData = req.body;
   visitData.visit_status = 'pending'
-    Visits.add(visitData)
-      .then(visit => {
-        res.status(201).json(visit);
-      })
-      .catch(err => {
-        res.status(500).json({ message: 'Failed to create new visit', err: visitData });
-      });
-  
+
+  let visit = await Visits.add(visitData)
+
+  let text = `You have a new School Visit Confirmation from ${visit.user_display_name}. 
+  Please click this link to choose your option: https://www.recruit-ai.netlify.com/visits/public/${visit.visit_id}`
+
+  sendMessage(text, "RecruitAI Automated Msg", visit.phone)
+    .then((m) => res.status(201).json(visit))
+    .catch((err) => console.log(err))
+
 });
 
-router.put('/choose/:id/:choice', async(req, res) => {
+router.put('/choose/:id/:choice', async (req, res) => {
+  const { id, choice } = req.params
+  let alert = null;
+
   let visit = await Visits.findById(req.params.id)
-  visit = await Visits.update({visit_status: "chosen", chosen_time: new Date(visit.time_options[req.params.choice])}, req.params.id)
-  res.json({visit, message: "Confirmed."})
+  visit = await Visits.update({ visit_status: "chosen", chosen_time: new Date(visit.time_options[choice]) }, id)
+  if (visit) {
+
+    const athlete = await Athletes.findById(id)
+    alert = await Alerts.addAlert(id, athlete.recruiting_personnel_id, "visit-choice")
+
+  }
+  res.json({ visit, alert, message: "Confirmed." })
 })
 
-router.put('/confirm/:id', authenticate.team_restricted, async(req, res) => {
+router.put('/confirm/:id', authenticate.team_restricted, async (req, res) => {
+  const { id, choice } = req.params
+  let alert = null;
+
   let visit = await Visits.findById(req.params.id)
-  visit = await Visits.update({visit_status: "confirmed"}, req.params.id)
-  res.json({visit, message: "Confirmed."})
+  visit = await Visits.update({ visit_status: "confirmed" }, req.params.id)
+  if (visit) {
+
+    const athlete = await Athletes.findById(id)
+
+    let visitDate = new Date(visit.chosen_time)
+    visitDate.setDate(visitDate.getDate() - 2)
+    alert = await Alerts.addAlert(id, athlete.recruiting_personnel_id, "visit-upcoming", visitDate)
+
+  }
+
+  res.json({ visit, alert, message: "Confirmed." })
 })
 
-router.put('/completed/:id', authenticate.team_restricted, async(req, res) => {
+router.put('/completed/:id', authenticate.team_restricted, async (req, res) => {
   let visit = await Visits.findById(req.params.id)
-  visit = await Visits.update({visit_status: "completed"}, req.params.id)
-  res.json({visit, message: "Confirmed."})
+  visit = await Visits.update({ visit_status: "completed" }, req.params.id)
+  res.json({ visit, message: "Confirmed." })
 })
 
-router.put('/missed/:id', authenticate.team_restricted, async(req, res) => {
+router.put('/missed/:id', authenticate.team_restricted, async (req, res) => {
   let visit = await Visits.findById(req.params.id)
-  visit = await Visits.update({visit_status: "missed"}, req.params.id)
-  res.json({visit, message: "Confirmed."})
+  visit = await Visits.update({ visit_status: "missed" }, req.params.id)
+  res.json({ visit, message: "Confirmed." })
 })
 
 router.put('/:id', authenticate.team_restricted, async (req, res) => {
@@ -92,15 +127,15 @@ router.put('/:id', authenticate.team_restricted, async (req, res) => {
   const changes = req.body;
 
 
-  
-    Visits.update(changes, id)
-      .then(updatedVisit => {
-        res.json(updatedVisit);
-      })
-      .catch(err => {
-        res.status(500).json({ message: 'Failed to update visit' });
-      });
-  
+
+  Visits.update(changes, id)
+    .then(updatedVisit => {
+      res.json(updatedVisit);
+    })
+    .catch(err => {
+      res.status(500).json({ message: 'Failed to update visit' });
+    });
+
 });
 
 

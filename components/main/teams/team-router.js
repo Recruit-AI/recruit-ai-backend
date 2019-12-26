@@ -4,6 +4,9 @@ const router = express.Router();
 const Teams = require('./team-model.js');
 const userKindsInfo = require('../../core/accounts/users/userKinds/user_kinds-model');
 
+
+const Alerts = require('../alerts/alert-model.js');
+
 const { log } = require('../../core/administration/userLogs/log-middleware.js')
 const authenticate = require('../../core/accounts/restricted-middleware.js')
 
@@ -66,13 +69,17 @@ router.post('/', authenticate.user_restricted, async (req, res) => {
 
 //A new account requesting to join a team
 router.get('/join/:id', authenticate.user_restricted, async(req, res) => {
+  const id = req.params.id
   const user = req.decodedToken.user
   let infoData = {}
-  infoData.team_id = req.params.id
+  infoData.team_id = id
   infoData.team_verified = false
   const UserKindDb = userKindsInfo(user.user_kind)
   UserKindDb.updateByUserId(infoData, user.user_id)
-  user.userInfo = {...user.userInfo, team_id: req.params.id, team_verified: false}
+  user.userInfo = {...user.userInfo, team_id: id, team_verified: false}
+
+  team = await Teams.findById(id)
+  alert = await Alerts.addAlert(null, team.account_moderator_id , "new-team-request")
 
 
   res.json({message: "Request sent. Please await verification from the owner of that team.", user })

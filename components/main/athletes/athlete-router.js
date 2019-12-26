@@ -1,10 +1,18 @@
 const express = require('express');
 const router = express.Router();
 
+const paginate = require('jw-paginate')
 const Athletes = require('./athlete-model.js');
 
 const { log } = require('../../core/administration/userLogs/log-middleware.js')
 const authenticate = require('../../core/accounts/restricted-middleware.js')
+
+
+var twilio = require('twilio');
+const bodyParser = require('body-parser');
+const MessagingResponse = twilio.twiml.MessagingResponse;
+router.use(bodyParser.urlencoded({ extended: false }));
+const { sendMessage } = require('../messages/message-helper')
 
 router.get('/', authenticate.team_restricted, (req, res) => {
   const user_id = req.decodedToken.user.user_id
@@ -16,7 +24,18 @@ router.get('/', authenticate.team_restricted, (req, res) => {
 
   Athletes.find(team_id, user_id, sort, order, filter)
     .then(athletes => {
-      res.json(athletes)
+      // get page from query params or default to first page
+      const page = parseInt(req.query.page) || 1;
+  
+      // get pager object for specified page
+      const pageSize = 15;
+      const pager = paginate(athletes.length, page, pageSize);
+  
+      // get page of site_blogs from site_blogs array
+      const pageOfItems = athletes.slice(pager.startIndex, pager.endIndex + 1);
+  
+      // return pager object and current page of site_blogs
+      return res.json({pager, pageOfItems});
     })
     .catch(err => {
       res.status(500).json({ message: 'Failed to get athletes' });
@@ -35,19 +54,31 @@ router.get('/:id', authenticate.team_restricted, async (req, res) => {
   } else {
     res.status(404).json({ message: 'Could not find athlete with given id.' })
   }
+});
 
+router.get('public/:id', async (req, res) => {
+  const { id } = req.params;
+
+  const athlete = await Athletes.findById(id)
+  if (athlete) {
+    res.json(athlete)
+  } else {
+    res.status(404).json({ message: 'Could not find athlete with given id.' })
+  }
 });
 
 router.post('/', authenticate.team_restricted, async (req, res) => {
   const athleteData = req.body;
 
-  Athletes.add(athleteData)
-    .then(athlete => {
-      res.status(201).json(athlete);
-    })
-    .catch(err => {
-      res.status(500).json({ message: 'Failed to create new athlete', err: athleteData });
-    });
+  const athlete = await Athletes.add(athleteData)
+      
+  let text = `${athlete.user_display_name} has created you an account with RecruitAI.
+  Please click this link to set up your information: https://www.recruit-ai.netlify.com/athletes/public/${athlete.athlete_id}`
+
+  sendMessage(text, "RecruitAI Automated Msg", athlete.phone)
+    .then((m) => res.status(201).json(athlete))
+    .catch((err) => console.log(err))
+  
 
 });
 
