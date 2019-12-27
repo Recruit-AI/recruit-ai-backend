@@ -41,7 +41,7 @@ function getTeamSummary(team_id, month=curr_month, year=curr_year) {
     .leftJoin('athletes', 'messages.message_athlete_id', 'athletes.athlete_id')
     .where('messages.message_team_id', team_id)
     .whereBetween('created_at', [from, to])
-    .orderBy([{ column: 'message_personnel_id' }, { column: 'created_at' }])
+    .orderBy([{ column: 'message_personnel_id' }, { column: 'message_athlete_id' }, { column: 'created_at' }])
   return query
 }
 
