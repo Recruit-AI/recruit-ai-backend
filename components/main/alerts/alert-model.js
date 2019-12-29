@@ -15,7 +15,7 @@ module.exports = {
 function find(id, filter) {
   let query =  db('alerts')
   .where( 'alerts.alert_personnel_id', id)
-  .where('alert_time', '>=', new Date(Date.now()) )
+  .where('alert_time', '<=', new Date(Date.now()) )
 
   
 
