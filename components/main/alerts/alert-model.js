@@ -15,13 +15,16 @@ module.exports = {
 function find(id, filter) {
   let query =  db('alerts')
   .where( 'alerts.alert_personnel_id', id)
+  .where('alert_time', '>=', new Date(Date.now()) )
+
+  
 
   if(!filter) {
     query = query.whereNull('alert_state')
   } else {
     query = query.where('alert_state', filter)
   }
-  return query
+  return query.orderBy('alert_time', 'desc')
 }
 
 function findById(id) {
