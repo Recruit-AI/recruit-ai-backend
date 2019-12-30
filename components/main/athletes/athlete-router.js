@@ -56,7 +56,7 @@ router.get('/:id', authenticate.team_restricted, async (req, res) => {
   }
 });
 
-router.get('public/:id', async (req, res) => {
+router.get('/public/:id', async (req, res) => {
   const { id } = req.params;
 
   const athlete = await Athletes.findById(id)
