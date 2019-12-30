@@ -67,6 +67,20 @@ router.get('/public/:id', async (req, res) => {
   }
 });
 
+router.put('/public/:id',  async (req, res) => {
+  const { id } = req.params;
+  const changes = req.body;
+
+  Athletes.update(changes, id)
+    .then(updatedAthlete => {
+      res.json(updatedAthlete);
+    })
+    .catch(err => {
+      res.status(500).json({ message: 'Failed to update athlete' });
+    });
+
+});
+
 router.post('/', authenticate.team_restricted, async (req, res) => {
   const athleteData = req.body;
 
