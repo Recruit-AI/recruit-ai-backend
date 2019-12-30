@@ -19,8 +19,11 @@ function find(id, filter) {
 
   
 
-  if(!filter) {
+  if(!filter || filter === 'unread') {
+    //set default to finding a null alert_state, i.e. 'unread'
     query = query.whereNull('alert_state')
+  } else if(filter==='all') {
+    //return all
   } else {
     query = query.where('alert_state', filter)
   }
