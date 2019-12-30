@@ -68,7 +68,7 @@ router.post('/', authenticate.team_restricted, async (req, res) => {
   let visit = await Visits.add(visitData)
 
   let text = `You have a new School Visit Confirmation from ${visit.user_display_name}. 
-  Please click this link to choose your option: https://www.recruit-ai.netlify.com/visits/public/${visit.visit_id}`
+  Please click this link to choose your option: https://recruit-ai.netlify.com/visits/${visit.visit_id}/choose`
 
   sendMessage(text, "RecruitAI Automated Msg", visit.phone)
     .then((m) => res.status(201).json(visit))
@@ -84,8 +84,8 @@ router.put('/choose/:id/:choice', async (req, res) => {
   visit = await Visits.update({ visit_status: "chosen", chosen_time: new Date(visit.time_options[choice]) }, id)
   if (visit) {
 
-    const athlete = await Athletes.findById(id)
-    alert = await Alerts.addAlert(id, athlete.recruiting_personnel_id, "visit-choice")
+    const athlete = await Athletes.findById(visit.visit_athlete_id)
+    alert = await Alerts.addAlert(visit.visit_athlete_id, athlete.recruiting_personnel_id, "visit-choice")
 
   }
   res.json({ visit, alert, message: "Confirmed." })
