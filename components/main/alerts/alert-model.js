@@ -14,10 +14,9 @@ module.exports = {
 
 function find(id, filter) {
   let query =  db('alerts')
+  .leftJoin('athletes', 'alerts.alert_athlete_id', 'athletes.athlete_id')
   .where( 'alerts.alert_personnel_id', id)
   .where('alert_time', '<=', new Date(Date.now()) )
-
-  
 
   if(!filter || filter === 'unread') {
     //set default to finding a null alert_state, i.e. 'unread'
@@ -27,6 +26,7 @@ function find(id, filter) {
   } else {
     query = query.where('alert_state', filter)
   }
+
   return query.orderBy('alert_time', 'desc')
 }
 
