@@ -87,7 +87,7 @@ router.post('/', authenticate.team_restricted, async (req, res) => {
   const athlete = await Athletes.add(athleteData)
       
   let text = `${athlete.user_display_name} has created you an account with RecruitAI.
-  Please click this link to set up your information: https://www.recruit-ai.netlify.com/athletes/public/${athlete.athlete_id}`
+  Please click this link to set up your information: https://recruit-ai.netlify.com/athletes/${athlete.athlete_id}/public`
 
   sendMessage(text, "RecruitAI Automated Msg", athlete.phone)
     .then((m) => res.status(201).json(athlete))

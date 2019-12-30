@@ -83,10 +83,8 @@ router.put('/choose/:id/:choice', async (req, res) => {
   let visit = await Visits.findById(req.params.id)
   visit = await Visits.update({ visit_status: "chosen", chosen_time: new Date(visit.time_options[choice]) }, id)
   if (visit) {
-
     const athlete = await Athletes.findById(visit.visit_athlete_id)
     alert = await Alerts.addAlert(visit.visit_athlete_id, athlete.recruiting_personnel_id, "visit-choice")
-
   }
   res.json({ visit, alert, message: "Confirmed." })
 })
