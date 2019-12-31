@@ -28,7 +28,7 @@ router.get('/', authenticate.team_restricted, (req, res) => {
       const page = parseInt(req.query.page) || 1;
   
       // get pager object for specified page
-      const pageSize = 2;
+      const pageSize = 10;
       const pager = paginate(athletes.length, page, pageSize);
   
       // get page of site_blogs from site_blogs array
