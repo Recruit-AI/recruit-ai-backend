@@ -85,7 +85,7 @@ function verify(id) {
 
 function updatePassword(hash, id) {
   return update({
-    password: hashedPassword,
+    password: hash,
     forgotten_password_reset_time: null
-  }, user.user_id)
+  }, id)
 }
