@@ -43,6 +43,7 @@ function findByName(name, excludingId = null) {
 function findTeamMembers(id) {
   return db('teams')
     .join('end_users', 'teams.team_id', 'end_users.team_id')
+    .join('users', 'users.user_id', 'end_users.foreign_user_id')
     .where('teams.team_id', id)
     .andWhere('team_verified', true)
     .select('user_display_name', 'foreign_user_id')
