@@ -46,7 +46,6 @@ function findTeamMembers(id) {
     .join('users', 'users.user_id', 'end_users.foreign_user_id')
     .where('teams.team_id', id)
     .andWhere('team_verified', true)
-    .select('user_display_name', 'foreign_user_id')
 }
 
 function add(team) {
