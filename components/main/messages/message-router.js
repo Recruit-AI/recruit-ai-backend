@@ -28,7 +28,7 @@ router.post('/send/:athlete_id', authenticate.team_restricted, async (req, res) 
 
   sendMessage(message_text, message.user_display_name, message.phone)
   .then((m) => res.json(message))
-  .catch((err) => res.status(500).json({message: err.message}))
+  .catch((err) => res.status(400).json({message: err.message}))
   
 })
 

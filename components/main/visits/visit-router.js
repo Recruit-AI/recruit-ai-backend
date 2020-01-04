@@ -72,7 +72,7 @@ router.post('/', authenticate.team_restricted, async (req, res) => {
 
   sendMessage(text, "RecruitAI Automated Msg", visit.phone)
     .then((m) => res.status(201).json(visit))
-    .catch((err) => res.status(500).json({message: err.message}))
+    .catch((err) => res.status(400).json({message: err.message}))
 
 });
 
