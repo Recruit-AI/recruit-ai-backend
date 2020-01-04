@@ -390,7 +390,7 @@ async function setPassword(username, password, user_hash) {
   const hashCheck = checkForgotPasswordHash(user, user_hash)
 
   if (user && oneDayAfter && hashCheck) {
-    const updatedUser = await Users.updatePassword(hashPassword, id)
+    const updatedUser = await Users.updatePassword(hashedPassword, id)
     return updatedUser
   } else {
     return false
