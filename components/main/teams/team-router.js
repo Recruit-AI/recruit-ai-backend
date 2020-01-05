@@ -67,6 +67,12 @@ router.post('/', authenticate.user_restricted, async (req, res) => {
   }
 });
 
+router.get('/change-owner/:user_id', authenticate.team_owner_restricted, async(req, res) => {
+  const team_id = req.decodedToken.verified_team_id
+  const team = await Teams.update({account_moderator_id: req.params.user_id}, team_id)
+  res.json(team)
+})
+
 //A new account requesting to join a team
 router.get('/join/:id', authenticate.user_restricted, async(req, res) => {
   const id = req.params.id

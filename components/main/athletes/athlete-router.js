@@ -20,9 +20,17 @@ router.get('/', authenticate.team_restricted, (req, res) => {
 
   const sort = req.query.sort || 'preferred_name'
   const order = req.query.order || 'asc'
-  const filter = req.query.filter || 'team'
+  const team_filter = req.query.team_filter || 'team'
 
-  Athletes.find(team_id, user_id, sort, order, filter)
+  //first, last, preferred
+  const search_term = req.query.search_term || ''
+  
+  //grade, state
+  //filter type SHOULD default to null (this allows it to pass/fail a check) and value to blank (so it doesn't err out as undef if blank, which is valid input)
+  const filter_type = req.query.result_filter_type
+  const filter_value = req.query.result_filter_value || ''
+
+  Athletes.find({team_id, user_id, sort, order, team_filter, search_term, filter_type, filter_value})
     .then(athletes => {
       // get page from query params or default to first page
       const page = parseInt(req.query.page) || 1;
@@ -40,6 +48,16 @@ router.get('/', authenticate.team_restricted, (req, res) => {
     .catch(err => {
       res.status(500).json({ message: 'Failed to get athletes' });
     });
+})
+
+router.get('/filter-information', authenticate.team_restricted, async (req, res) => {
+  const team_id = req.decodedToken.verified_team_id
+
+  const year_options = await Athletes.options(team_id, 'school_year')
+  const state_options = await Athletes.options(team_id, 'state')
+
+  res.json({year_options, state_options})
+
 })
 
 router.get('/:id', authenticate.team_restricted, async (req, res) => {
