@@ -27,7 +27,7 @@ router.get('/', authenticate.team_restricted, (req, res) => {
   
   //grade, state
   //filter type SHOULD default to null (this allows it to pass/fail a check) and value to blank (so it doesn't err out as undef if blank, which is valid input)
-  const filter_type = req.query.result_filter_type
+  const filter_type = req.query.result_filter_type || ''
   const filter_value = req.query.result_filter_value || ''
 
   Athletes.find({team_id, user_id, sort, order, team_filter, search_term, filter_type, filter_value})

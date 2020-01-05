@@ -29,7 +29,7 @@ function find(params) {
     .orWhere('city', 'iLIKE', `%${search_term}%`)
   )
 
-  if(filter_type) {
+  if(filter_type !== '') {
     query = query.andWhere(filter_type, filter_value)
   }
 
