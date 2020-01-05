@@ -53,10 +53,10 @@ router.get('/', authenticate.team_restricted, (req, res) => {
 router.get('/filter-information', authenticate.team_restricted, async (req, res) => {
   const team_id = req.decodedToken.verified_team_id
 
-  const year_options = await Athletes.options(team_id, 'school_year')
-  const state_options = await Athletes.options(team_id, 'state')
+  const school_year = await Athletes.options(team_id, 'school_year')
+  const state = await Athletes.options(team_id, 'state')
 
-  res.json({year_options, state_options})
+  res.json({school_year, state})
 
 })
 
