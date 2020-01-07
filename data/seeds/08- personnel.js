@@ -13,6 +13,7 @@ exports.seed = function(knex) {
     }, 
 
 
+
     //SMALL TEAM
 
     {
@@ -119,6 +120,18 @@ exports.seed = function(knex) {
       user_display_name: "CO",
       athlete_watch_list: []
     },
+
+    
+    {
+      foreign_user_id: 16,
+      team_id: 1,
+      team_verified: true,
+      user_first_name: "Example",
+      user_last_name: "Test",
+      user_professional_title: "Recruiter",
+      user_display_name: "Example Recruiter",
+      athlete_watch_list: []
+    }, 
 
   ])
 

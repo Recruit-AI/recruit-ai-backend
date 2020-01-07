@@ -132,6 +132,14 @@ exports.seed = function (knex) {
             user_role: 1,
             user_kind: "end_user",
             user_verified: true
-        }
+        },
+        {
+            password: password,
+            username: "ERecruiter",
+            user_email: "erecruiter@gmail.com",
+            user_role: 1,
+            user_kind: "end_user",
+            user_verified: true
+        },
     ]);
 };
