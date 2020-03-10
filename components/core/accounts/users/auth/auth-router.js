@@ -172,6 +172,7 @@ router.put('/edit', authenticate.user_restricted, async (req, res) => {
   delete changes['user_id']
   delete changes['user_verified']
   delete changes['user_kind']
+  const userInfo = { ...changes['userInfo'] }
   delete changes['userInfo']
 
   let errors = []
@@ -196,12 +197,13 @@ router.put('/edit', authenticate.user_restricted, async (req, res) => {
 
   if (changes.user_email && (changes.user_email != user.user_email)) {
     emailSearch = await Users.findByEmail(changes.user_email)
-    if (emailSearch) { errors.push("THat email is taken.") }
+    if (emailSearch) { errors.push("That email is taken.") }
   }
 
   if (errors.length === 0) {
     Users.update(changes, id)
       .then(updatedUser => {
+        updatedUser.userInfo = userInfo
         res.json(updatedUser);
       });
   } else {
