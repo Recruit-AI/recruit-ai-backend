@@ -66,8 +66,8 @@ router.post('/register', async (req, res) => {
     const user_hash = registerEmail(user)
     res.status(201).json({
       message: "User registered. Please check your email for confirmation.",
-      user, //should be removed in prod
-      user_hash //should be removed in prod
+      //user, //should be removed in prod
+      //user_hash //should be removed in prod
 
     })
 
@@ -150,7 +150,7 @@ router.post('/login', check_ip_ban, async (req, res) => {
     user.userInfo = userInfo
 
     const token = generateToken(user)
-    delete user.password
+    user.password = ""
     res.status(200).json({ message: "Welcome!", token: token, user: user })
   } else {
     res.status(500).json({ message: "Invalid Credentials." })
@@ -203,6 +203,7 @@ router.put('/edit', authenticate.user_restricted, async (req, res) => {
   if (errors.length === 0) {
     Users.update(changes, id)
       .then(updatedUser => {
+        updatedUser.password = ""
         updatedUser.userInfo = userInfo
         res.json(updatedUser);
       });
