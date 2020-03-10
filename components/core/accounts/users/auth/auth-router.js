@@ -180,12 +180,20 @@ router.put('/edit', authenticate.user_restricted, async (req, res) => {
   let emailSearch = false
 
   if (changes.password && changes.password != "") {
-    var pwStrength = owasp.test(changes.password);
-    errors = [...errors, ...pwStrength.errors]
-    changes.password = bcrypt.hashSync(changes.password, 10)
+    if(changes.confirmPassword === changes.password) {
+      var pwStrength = owasp.test(changes.password);
+      if(errors.length > 0) {
+        errors = [...errors, ...pwStrength.errors]
+      } else {
+        changes.password = bcrypt.hashSync(changes.password, 10)
+      }
+    } else {
+      errors.push("Passwords do not match.")
+    }
   } else {
     delete changes.password
   }
+  delete changes.confirmPassword
 
   if (changes.username && (changes.username != user.username)) {
     var regex = /^[A-Za-z0-9]+$/
