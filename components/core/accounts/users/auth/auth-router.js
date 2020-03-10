@@ -153,7 +153,7 @@ router.post('/login', /*check_ip_ban,*/ async (req, res) => {
     user.password = ""
     res.status(200).json({ message: "Welcome!", token: token, user: user })
   } else {
-    res.status(500).json({ message: "Invalid Credentials.", user, password })
+    res.status(500).json({ message: "Invalid Credentials.", user, password, result: bcrypt.compareSync(password, user.password)  })
   }
 
 });
