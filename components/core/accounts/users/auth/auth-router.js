@@ -144,7 +144,7 @@ router.post('/login', /*check_ip_ban,*/ async (req, res) => {
 
   const user = await Users.findUser(username)
 
-  if (user && bcrypt.compareSync(password, user.password) && user.user_verified) {
+  if (user && /*bcrypt.compareSync(password, user.password) &&*/ user.user_verified) {
 
     const userInfo = await getUserKindInfo(user)
     user.userInfo = userInfo
