@@ -42,7 +42,7 @@ function findByUsername(username) {
 
 function findByEmail(user_email) {
   return db('users')
-  .where('user_email', 'iLIKE', '%'+email+'%')
+  .where('user_email', 'iLIKE', '%'+user_email+'%')
     .first();
 }
 
