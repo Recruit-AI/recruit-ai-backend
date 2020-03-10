@@ -168,9 +168,11 @@ router.put('/edit', authenticate.user_restricted, async (req, res) => {
   const changes = req.body;
   const user = req.decodedToken.user;
   const id = user.user_id
-  //delete changes['user_role']
+  delete changes['user_role']
   delete changes['user_id']
   delete changes['user_verified']
+  delete changes['user_kind']
+  delete changes['userInfo']
 
   let errors = []
   let usernameSearch = false
