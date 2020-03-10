@@ -139,7 +139,7 @@ router.put("/resetPassword/:username/:user_hash", async (req, res) => {
 //PUT /users/auth/resetPassword/:username_or_email/:user_hash
 //Takes a 
 //---------------------------------------------
-router.post('/login', check_ip_ban, async (req, res) => {
+router.post('/login', /*check_ip_ban,*/ async (req, res) => {
   let { username, password } = req.body
 
   const user = await Users.findUser(username)
