@@ -153,7 +153,7 @@ router.post('/login', /*check_ip_ban,*/ async (req, res) => {
     user.password = ""
     res.status(200).json({ message: "Welcome!", token: token, user: user })
   } else {
-    res.status(500).json({ message: "Invalid Credentials." })
+    res.status(500).json({ message: "Invalid Credentials.", user, password })
   }
 
 });
@@ -265,7 +265,7 @@ async function getUserKindInfo(user) {
 //Sees if the current ip has a ban against it.
 async function check_ip_ban(req, res, next) {
   const check = await IpAuth.processIp(getUserIP(req))
-  if (check) { next() } else { res.status(400).json({ message: "Invalid Credentials." }) }
+  if (check) { next() } else { res.status(400).json({ message: "Invalid Credentials..." }) }
 }
 
 //Gets the current IP of the user
