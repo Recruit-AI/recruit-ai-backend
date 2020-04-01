@@ -37,7 +37,7 @@ router.post('/send/:athlete_id', authenticate.team_restricted, async (req, res) 
 //Use cases- text "help" to get a list of these options
 //Text "visit" to get the status on the visit- it either sends the date/information, or the choose link again
 //Text "recruiter" to get the information of your recruiter
-//Text "information" to get a general overview of the app- "RecruitAI is an app that allows you the convience of just using your phone."
+//Text "information" to get a general overview of the app- "RecruitAI is an app that allows you the convenience of just using your phone."
 
 router.post('/sms', async (req, res) => {
   const twiml = new MessagingResponse();
